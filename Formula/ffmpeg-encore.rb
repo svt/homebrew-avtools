@@ -26,6 +26,7 @@ class FfmpegEncore < Formula
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
+  depends_on "sdl2"
   depends_on "openssl"
   depends_on "x264-encore"
   depends_on "x265-encore"
