@@ -11,12 +11,13 @@ class FfmpegEncore < Formula
   license "GPL-2.0-only"
   revision 1
   head "https://github.com/FFmpeg/FFmpeg.git"
+
   option "with-ffplay", "Enable ffplay"
 
   depends_on "nasm" => :build
   depends_on "pkg-config" => :build
   depends_on "aom"
-  depends_on "fdk-aac"
+  depends_on "fdk-aac" => :recommended
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "lame"
@@ -26,7 +27,7 @@ class FfmpegEncore < Formula
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
-  depends_on "openssl"
+  depends_on "openssl@3"
   depends_on "x264-encore"
   depends_on "x265-encore"
 
@@ -46,17 +47,6 @@ class FfmpegEncore < Formula
   end
 
   def install
-    resource("proxy_filter").stage do |stage|
-      @proxyfilterpath = Dir.pwd
-      stage.staging.retain!
-    end
-    cp_r Dir.glob("#{@proxyfilterpath}/*.c"), "libavfilter", verbose: true
-    inreplace "libavfilter/allfilters.c",
-              "extern AVFilter ff_vf_yadif;",
-              "extern AVFilter ff_vf_yadif;\nextern AVFilter ff_vf_proxy;\n"
-    inreplace "libavfilter/Makefile",
-              "# video filters",
-              "# video filters\nOBJS-\$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
 
     args = %W[
       --prefix=#{prefix}
@@ -84,12 +74,37 @@ class FfmpegEncore < Formula
       --enable-libaom
       --enable-openssl
       --enable-libssh
-      --enable-libfdk-aac
       --enable-libvmaf
       --enable-nonfree
     ]
+
+    if !build.without? "fdk-aac"
+      args << "--enable-libfdk-aac" 
+    end
+   
     args << "--enable-ffplay" if build.with? "ffplay"
     args << "--enable-videotoolbox" if OS.mac?
+   
+    # GPL-incompatible libraries, requires ffmpeg to build with "--enable-nonfree" flag, (unredistributable libraries)
+    # Openssl IS GPL compatible since 3, but due to this patch 
+    # https://patchwork.ffmpeg.org/project/ffmpeg/patch/20200609001340.52369-1-rcombs@rcombs.me/
+    # not being in this version we build from, we have to enable non-free anyway. 
+    # When FFmpeg base is upgraded (including that patch), we should only enable-nonfree when
+    # fdk-aac is enabled (the default option)
+    # args << "--enable-nonfree" if !build.without?("fdk-aac")
+
+    resource("proxy_filter").stage do |stage|
+      @proxyfilterpath = Dir.pwd
+      stage.staging.retain!
+    end
+    cp_r Dir.glob("#{@proxyfilterpath}/*.c"), "libavfilter", verbose: true
+    inreplace "libavfilter/allfilters.c",
+              "extern AVFilter ff_vf_yadif;",
+              "extern AVFilter ff_vf_yadif;\nextern AVFilter ff_vf_proxy;\n"
+    inreplace "libavfilter/Makefile",
+              "# video filters",
+              "# video filters\nOBJS-\$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
+    
     system "./configure", *args
     system "make", "install"
 
