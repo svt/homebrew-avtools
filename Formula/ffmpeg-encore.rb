@@ -6,12 +6,10 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.xz"
-  sha256 "ad009240d46e307b4e03a213a0f49c11b650e445b1f8be0dda2a9212b34d2ffb"
+  url "https://ffmpeg.org/releases/ffmpeg-4.4.1.tar.xz"
+  sha256 "eadbad9e9ab30b25f5520fbfde99fae4a92a1ae3c0257a8d68569a4651e30e02"
   license "GPL-3.0-or-later"
-  revision 1
   head "https://github.com/FFmpeg/FFmpeg.git"
-
   option "with-ffplay", "Enable ffplay"
 
   depends_on "nasm" => :build
@@ -28,6 +26,7 @@ class FfmpegEncore < Formula
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "openssl@3"
+  depends_on "zimg"
   depends_on "x264-encore"
   depends_on "x265-encore"
 
@@ -42,7 +41,9 @@ class FfmpegEncore < Formula
   end
 
   if build.with? "ffplay"
-    depends_on "libxv" unless OS.mac?
+    on_linux do
+      depends_on "libxv"
+    end
     depends_on "sdl2"
   end
 
@@ -71,24 +72,27 @@ class FfmpegEncore < Formula
       --enable-libfreetype
       --disable-libjack
       --disable-indev=jack
-      --enable-libaom
       --enable-openssl
       --enable-libssh
       --enable-libvmaf
+      --enable-libzimg
       --enable-nonfree
     ]
 
     if !build.without? "fdk-aac"
-      args << "--enable-libfdk-aac" 
+      args << "--enable-libfdk-aac"
     end
-   
+
     args << "--enable-ffplay" if build.with? "ffplay"
-    args << "--enable-videotoolbox" if OS.mac?
-   
+    on_macos do
+      # Needs corefoundation, coremedia, corevideo
+      args << "--enable-videotoolbox"
+    end
+
     # GPL-incompatible libraries, requires ffmpeg to build with "--enable-nonfree" flag, (unredistributable libraries)
-    # Openssl IS GPL compatible since 3, but due to this patch 
+    # Openssl IS GPL compatible since 3, but due to this patch
     # https://patchwork.ffmpeg.org/project/ffmpeg/patch/20200609001340.52369-1-rcombs@rcombs.me/
-    # not being in this version we build from, we have to enable non-free anyway. 
+    # not being in this version we build from, we have to enable non-free anyway.
     # When FFmpeg base is upgraded (including that patch), we should only enable-nonfree when
     # fdk-aac is enabled (the default option)
     # args << "--enable-nonfree" if !build.without?("fdk-aac")
@@ -104,7 +108,7 @@ class FfmpegEncore < Formula
     inreplace "libavfilter/Makefile",
               "# video filters",
               "# video filters\nOBJS-\$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
-    
+
     system "./configure", *args
     system "make", "install"
 
