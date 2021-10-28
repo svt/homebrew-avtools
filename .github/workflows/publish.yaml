@@ -96,6 +96,7 @@ jobs:
           context: .
           file: docker/Dockerfile.osadl.debian
           cache-from: type=gha
+          cache-to: type=gha,mode=min
           platforms: x86_64
           push: true
           tags: ${{ steps.metadist.outputs.tags }}
@@ -124,6 +125,8 @@ jobs:
           file: docker/Dockerfile.osadl.debian
           platforms: x86_64
           cache-from: type=gha
+          build-args: |
+                  FFMPEG_BREW_OPTIONS=--without-fdk-aac
           push: true
           tags: ${{ steps.metasource.outputs.tags }}
           labels: ${{ steps.metasource.outputs.labels }}
