@@ -1,0 +1,32 @@
+
+===================================================================
+= AVTools Docker Image                                            =
+=								  =
+= Only intended for *development tests*, *not* for production use =
+===================================================================
+
+This Docker container includes, among others, Free and Open Source 
+software (FOSS) that was developed by third parties. In particular, the 
+applicable licenses include the GNU General Public License and GNU 
+Lesser General Public License, for which the following disclaimer of
+warranty in favor of the holders of rights applies:
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+Public License for more details. 
+
+For all other FOSS components, see the warranty disclaimers in favor of 
+the holders of rights in the respective license texts.
+
+The source code, license texts of installed software packages are archived in
+the *corresponding source image* from the AVTools repo, where you will find:
+
+/buster-src_x.tgz - source and licenses for the packages in the OSADL base image layer 
+/source/brew-src_x_tar.xz - source and licenses for the packages used the brew build image layer 
+/source/apt-src_x.tar.xz -  source and licenses for the packages used in the apt layer
+
+However, in this distribution image you will also find a:
+/LICENSE_THIRD_PARTY.txt - license information about the packages used for creating the FFmpeg binary.
+
+

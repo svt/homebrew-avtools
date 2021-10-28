@@ -15,6 +15,30 @@ Currently this tap holds minor modifications of existing core Homebrew formulas 
 
 ## Installation & Usage
 
+There are a few options. 
+
+You can use the prebuilt docker-image, build your own docker image or add the Brew tap.
+
+### Docker
+
+You can use the prebuilt Docker image or build your own.
+
+The prebuilt Docker image is available at [avtools-debian]() 
+
+### Building your own Dockerimage
+
+You can also build you own Docker Image using the included Dockerfile
+
+_Example, in root, using buildx, building for the linux/amd64 platform_
+
+```console
+$ docker buildx build --platform linux/amd64 . -f docker/Dockerfile.oasdl.debian
+```
+ 
+
+
+### Install Brew tap
+
 - Add the tap to your Brew tap configuration, and install the tools you wish
 
 ```console
@@ -39,14 +63,18 @@ Currently, the configurations options are few - this might change in the future.
 
 ## Known issues
 
-Auditing the Formulas still gives a few warnings, *feel free to fix them.*
+* The Docker Images could be smaller if it used Alpine, and was optimized regarding dependencies
+
+* The build uses some libraries installed through Apt, so we are *not* in the Brew eco system totally - in other words, all dependecies used for the avvideo tools are not found in Brews. Run ffmpeg with ldd to see a list.
+ 
+* Auditing the Formulas still gives a few warnings, *feel free to fix them.*
 To audit them all, from the project's root folder you can run
 
 ```console
 $ for f in Formula/*.rb; do echo "Processing $f file.."; eval "brew audit --new --formula $f"; done
 ```
 
-The Formulas is not yet keg_only, which could allow to have multiple instances/versions
+* The Formulas is not yet keg_only, which could allow to have multiple instances/versions
 
 ## Getting help
 
@@ -64,7 +92,13 @@ See [CONTRIBUTING](CONTRIBUTING.adoc)
 
 - The Formulas FFmpeg-encore, x264-encore, x264-encore is built on Brew formulas, released under the same BSD-2 License, but also Copyright 2009-present, Homebrew contributors besides SVT.
 
-- However, Note that the binaries the Formulas will *build* is released under various other licenses, see the different projects homepages and the license metadata in the Formula for some guidance for making an informed decision if you intend to share any built binaries further.
+- However, Note that the binaries the Formulas will *build* is released under various other licenses, see the different projects homepages and the license metadata in the Formula for some guidance for making an informed decision if you intend to share any built binaries further, if you add things.
+
+The Docker Image avtools-debian image is built on the [OSADL](https://www.osadl.org/OSADL-Docker-Base-Image.osadl-docker-base-image.0.html ) Debian image, wich contains license information and source code, see information.
+
+- The FFmpeg binary compiled in avtools-ubuntu is enabling gpl and using third party libraries:
+  - 264, 265 GPL (TODO).
+
 
 ----
 
@@ -74,5 +108,5 @@ See [CONTRIBUTING](CONTRIBUTING.adoc)
 
 ## Credits and references
 
-To the great projects FFmpeg, Brew, x264, x265 and many others we forgot.
+To the great projects OSADL, FFmpeg, Brew, x264, x265 and many others we forgot.
 
