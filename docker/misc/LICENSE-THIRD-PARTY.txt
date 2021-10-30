@@ -2782,4 +2782,6 @@ Am Wolfsmantel 33
 
 www.iis.fraunhofer.de/amm
 amm-info@iis.fraunhofer.de
-
+-------------------------------------------------------------------------------------
+NOTE: The current FDK-AAC license is not GPLxx compatible, and not included in these distribution builds, 
+ don't distrubute a build with this and GPL libraries. Included in the file anyway for completeness should you experiment with that build option.

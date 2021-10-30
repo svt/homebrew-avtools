@@ -13,7 +13,6 @@ ARG APT_BUILD_DEPS="autoconf \
                nasm \
                perl \
                pkg-config \
-               python \
                libssl-dev \
                yasm \
                zlib1g-dev \
@@ -28,10 +27,10 @@ ARG APT_BUILD_DEPS="autoconf \
 	       ca-certificates \
 	       zip \
 	       unzip "
-
+ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
 
 #General dependency image - to simplify caching
-FROM osadl/debian-docker-base-image:buster_amd64_v1.2 as dependencies
+FROM ${DOCKER_BASE} as dependencies
 
 ARG APT_BUILD_DEPS
 
@@ -68,18 +67,17 @@ RUN mkdir -m777 /ffmpeg-filters && \
 CMD ["ffmpeg", "-version"]
 
 #A trim stage. You can most likely refine this stage
-FROM osadl/debian-docker-base-image:buster_amd64_v1.2 as cleanupfordistribution
+FROM ${DOCKER_BASE} as cleanupfordistribution
 
 COPY --from=buildimage /ffmpeg-filters /ffmpeg-filters
 COPY --from=buildimage /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
 COPY --from=buildimage /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
 
-RUN rm -rf /home/linuxbrew/.linuxbrew/Homebrew && \
-    rm /buster-src_1.2.tgz
+RUN rm -rf /home/linuxbrew/.linuxbrew/Homebrew 
 
 
 #distribution image
-FROM osadl/debian-docker-base-image:buster_amd64_v1.2 as distribution
+FROM  ${DOCKER_BASE} as distribution
 
 LABEL org.opencontainers.image.url="https://github.com/janderssonse/homebrew-avtools"
 LABEL org.opencontainers.image.source="https://github.com/janderssonse/homebrew-avtools"
@@ -109,7 +107,7 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 CMD ["ffmpeg", "-version"]
 
 #source Image
-FROM osadl/debian-docker-base-image:buster_amd64_v1.2 as source
+FROM ${DOCKER_BASE} as source
 
 LABEL org.opencontainers.image.url="https://github.com/janderssonse/homebrew-avtools"
 LABEL org.opencontainers.image.source="https://github.com/janderssonse/homebrew-avtools"
@@ -132,7 +130,7 @@ RUN sourceDir="/source" && \
   apt-get update --allow-releaseinfo-change && \ 
   apt-get install -yq --no-install-recommends bzip2 ca-certificates curl git && \
   brew unpack $(brew list --formula) --destdir ${brewSourceDir} && \
-  cd ${aptSourceDir} && apt --download-only source $APT_BUILD_DEPS && \
+  cd ${aptSourceDir} && apt-get update && apt-get --download-only source $APT_BUILD_DEPS && \
   echo "Will  tar brew src" && \
   XZ_OPT='-T0 -9' tar --xz -cf "${sourceDir}/brew-src_$(date '+%Y-%m-%d').tar.xz" -C ${brewSourceDir} . && \
   echo "Will tar apt src" && \
