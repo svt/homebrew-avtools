@@ -34,7 +34,7 @@ FROM ${DOCKER_BASE} as dependencies
 
 ARG APT_BUILD_DEPS
 
-RUN     apt-get update --allow-releaseinfo-change && \ 
+RUN     apt-get update --allow-releaseinfo-change && apt upgrade && \ 
         apt-get install -yq --no-install-recommends $APT_BUILD_DEPS && \
 	apt-get clean && apt-get autoremove
 	
@@ -82,8 +82,20 @@ FROM  ${DOCKER_BASE} as distribution
 LABEL org.opencontainers.image.url="https://github.com/janderssonse/homebrew-avtools"
 LABEL org.opencontainers.image.source="https://github.com/janderssonse/homebrew-avtools"
 LABEL org.opencontainers.image.title="avtools-osadl-debian-distribution"
+ 
+# brew issue, the avtools-tap formulas for ffmpeg and mediainfo uses some host system libraries instead of 100% brew -> slight host dependency instead of brew dep. If brew updates the glibc version this most likely be discarded, at least most parts of it. 
+#COPY --from=buildimage /lib/x86_64-linux-gnu/libc.so.6 \
+########/lib/x86_64-linux-gnu/libm.so.6 \
+########/lib/x86_64-linux-gnu/libpthread.so.0 \
+########/lib/x86_64-linux-gnu/libdl.so.2 \
+########/lib/x86_64-linux-gnu/libresolv.so.2 \
+########/lib/x86_64-linux-gnu/
 
-RUN useradd -ms /bin/bash avtools
+
+RUN useradd -ms /bin/bash avtools && \
+    apt-get update --allow-releaseinfo-change && apt upgrade && \ 
+    apt-get install -yq --no-install-recommends libc6 && \
+    apt-get clean && apt-get autoremove
 
 COPY docker/misc/motd.dist.txt /etc/motd
 COPY docker/misc/LICENSE-THIRD-PARTY.txt /
@@ -91,13 +103,8 @@ COPY docker/misc/LICENSE-THIRD-PARTY.txt /
 COPY --from=cleanupfordistribution --chown=avtools:avtools /ffmpeg-filters /ffmpeg-filters
 COPY --from=cleanupfordistribution --chown=avtools:avtools /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
 
-# brew issue, the avtools-tap formulas for ffmpeg and mediainfo uses some host system libraries instead of 100% brew -> slight host dependency instead of brew dep. If brew updates the glibc version this most likely be discarded, at least most parts of it. 
-COPY --from=buildimage /lib/x86_64-linux-gnu/libc.so.6 \
-	/lib/x86_64-linux-gnu/libm.so.6 \
-	/lib/x86_64-linux-gnu/libpthread.so.0 \
-	/lib/x86_64-linux-gnu/libdl.so.2 \
-	/lib/x86_64-linux-gnu/libresolv.so.2 \
-	/lib/x86_64-linux-gnu/
+
+
 
 USER avtools
 WORKDIR /home/avtools/
@@ -130,7 +137,7 @@ RUN sourceDir="/source" && \
   apt-get update --allow-releaseinfo-change && \ 
   apt-get install -yq --no-install-recommends bzip2 ca-certificates curl git && \
   brew unpack $(brew list --formula) --destdir ${brewSourceDir} && \
-  cd ${aptSourceDir} && apt-get update && apt-get --download-only source $APT_BUILD_DEPS && \
+  cd ${aptSourceDir} && apt-get update && apt-get upgrade && apt-get --download-only source $APT_BUILD_DEPS && \
   echo "Will  tar brew src" && \
   XZ_OPT='-T0 -9' tar --xz -cf "${sourceDir}/brew-src_$(date '+%Y-%m-%d').tar.xz" -C ${brewSourceDir} . && \
   echo "Will tar apt src" && \
