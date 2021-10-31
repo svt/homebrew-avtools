@@ -27,12 +27,15 @@ ARG APT_BUILD_DEPS="autoconf \
 	       ca-certificates \
 	       zip \
 	       unzip "
+
 ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
+ARG REPO_OWNER=janderssonse
 
 #General dependency image - to simplify caching
 FROM ${DOCKER_BASE} as dependencies
 
 ARG APT_BUILD_DEPS
+ARG REPO_OWNER
 
 RUN     apt-get update --allow-releaseinfo-change && apt upgrade && \ 
         apt-get install -yq --no-install-recommends $APT_BUILD_DEPS && \
@@ -45,7 +48,7 @@ RUN export HOMEBREW_NO_AUTO_UPDATE=1 && \
     export HOMEBREW_NO_ANALYTICS=1 && \
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
     brew install gcc mediainfo && \
-    brew tap janderssonse/avtools && \
+    brew tap $REPO_OWNER/avtools && \
     brew install --only-dependencies ffmpeg-encore libsvg-proxy-filter libsrf-proxy-filter
 
 #Basebuild image for ffmpeg option variations 
@@ -79,8 +82,10 @@ RUN rm -rf /home/linuxbrew/.linuxbrew/Homebrew
 #distribution image
 FROM  ${DOCKER_BASE} as distribution
 
-LABEL org.opencontainers.image.url="https://github.com/janderssonse/homebrew-avtools"
-LABEL org.opencontainers.image.source="https://github.com/janderssonse/homebrew-avtools"
+ARG REPO_OWNER
+
+LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
 LABEL org.opencontainers.image.title="avtools-osadl-debian-distribution"
  
 # brew issue, the avtools-tap formulas for ffmpeg and mediainfo uses some host system libraries instead of 100% brew -> slight host dependency instead of brew dep. If brew updates the glibc version this most likely be discarded, at least most parts of it. 
@@ -116,8 +121,10 @@ CMD ["ffmpeg", "-version"]
 #source Image
 FROM ${DOCKER_BASE} as source
 
-LABEL org.opencontainers.image.url="https://github.com/janderssonse/homebrew-avtools"
-LABEL org.opencontainers.image.source="https://github.com/janderssonse/homebrew-avtools"
+ARG REPO_OWNER
+
+LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
 LABEL org.opencontainers.image.title="avtools-osadl-debian-source"
 
 ARG APT_BUILD_DEPS
