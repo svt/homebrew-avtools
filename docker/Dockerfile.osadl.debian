@@ -29,7 +29,7 @@ ARG APT_BUILD_DEPS="autoconf \
 	       unzip "
 
 ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
-ARG REPO_OWNER=janderssonse
+ARG REPO_OWNER=svt
 
 #General dependency image - to simplify caching
 FROM ${DOCKER_BASE} as dependencies

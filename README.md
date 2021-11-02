@@ -1,4 +1,4 @@
-![REUSE Compliance](https://img.shields.io/reuse/compliance/github.com/janderssonse/homebrew-avtools)
+![REUSE Compliance](https://img.shields.io/reuse/compliance/github.com/svt/homebrew-avtools)
 
 # Homebrew AVTools
 
@@ -51,7 +51,7 @@ $ brew install ffmpeg-encore
 _**This image is only intended for development and not production usage. It contains the taps version of FFmpeg. 
 Notably, compared to the Formula/ffmpeg-encore does *excludes* the GPL-incompatible library fdk-aac** (but use aac instedI)_
 
-[avtools-osadl-debian](https://github.com/janderssonse?tab=packages&repo_name=homebrew-avtools), 
+[avtools-osadl-debian](https://github.com/svt?tab=packages&repo_name=homebrew-avtools), 
 
 
 #### Building your own Dockerimage
@@ -131,7 +131,7 @@ The Docker Image avtools-osadl-debian image is built on the [OSADL](https://www.
 
 The FFmpeg binary compiled in avtools-osadl-debian is released as under GPLv3 due to being the least common distrubutable license combination. 
 
-A corresponding image [avtools-osadl-debian-source-image](https://github.com/janderssonse?tab=packages&repo_name=homebrew-avtools) contains corresponding source and license information for the libraries used.
+A corresponding image [avtools-osadl-debian-source-image](https://github.com/svt?tab=packages&repo_name=homebrew-avtools) contains corresponding source and license information for the libraries used.
 
 _We aim to follow best practices for license compliance, however, if you find something we missed or even plain errors, please let us know so that we can improve this as soon as possible._
 
