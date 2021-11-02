@@ -64,7 +64,7 @@ jobs:
           context: .
           file: docker/Dockerfile.osadl.debian
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: false
           target: dependencies
 
@@ -101,7 +101,7 @@ jobs:
           file: docker/Dockerfile.osadl.debian
           cache-from: type=gha
           cache-to: type=gha,mode=min
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.metadist.outputs.tags }}
           build-args: |
@@ -127,7 +127,7 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile.osadl.debian
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           cache-from: type=gha
           build-args: |
                   FFMPEG_BREW_OPTIONS=--without-fdk-aac
