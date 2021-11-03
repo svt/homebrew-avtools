@@ -31,7 +31,7 @@ ARG APT_BUILD_DEPS="autoconf \
 ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
 ARG REPO_OWNER=svt
 
-#General dependency image - to simplify caching
+#General dependency image - to simplify caching.
 FROM ${DOCKER_BASE} as dependencies
 
 ARG APT_BUILD_DEPS
@@ -51,7 +51,7 @@ RUN export HOMEBREW_NO_AUTO_UPDATE=1 && \
     brew tap $REPO_OWNER/avtools && \
     brew install --only-dependencies ffmpeg-encore libsvg-proxy-filter libsrf-proxy-filter
 
-#Basebuild image for ffmpeg option variations 
+#Basebuild image, from dependecies for ffmpeg option variations 
 FROM dependencies as buildimage
 
 ARG FFMPEG_BREW_OPTIONS
@@ -65,22 +65,18 @@ RUN mkdir -m777 /ffmpeg-filters && \
     cp $(brew --prefix)/lib/libsvg_filter.so $(brew --prefix)/lib/libsrf_filter.so /ffmpeg-filters/ && \
     brew autoremove && \
     brew cleanup -s && \
-    rm -rf "$(brew --cache)"
+    rm -rf "$(brew --cache)" 
 
 CMD ["ffmpeg", "-version"]
 
-#A trim stage. You can most likely refine this stage
-FROM ${DOCKER_BASE} as cleanupfordistribution
-
-COPY --from=buildimage /ffmpeg-filters /ffmpeg-filters
-COPY --from=buildimage /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
-COPY --from=buildimage /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
+#trim 
+FROM buildimage as trimimage
 
 RUN rm -rf /home/linuxbrew/.linuxbrew/Homebrew 
 
 
 #distribution image
-FROM  ${DOCKER_BASE} as distribution
+FROM ${DOCKER_BASE} as distribution
 
 ARG REPO_OWNER
 
@@ -89,13 +85,6 @@ LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-a
 LABEL org.opencontainers.image.title="avtools-osadl-debian-distribution"
  
 # brew issue, the avtools-tap formulas for ffmpeg and mediainfo uses some host system libraries instead of 100% brew -> slight host dependency instead of brew dep. If brew updates the glibc version this most likely be discarded, at least most parts of it. 
-#COPY --from=buildimage /lib/x86_64-linux-gnu/libc.so.6 \
-########/lib/x86_64-linux-gnu/libm.so.6 \
-########/lib/x86_64-linux-gnu/libpthread.so.0 \
-########/lib/x86_64-linux-gnu/libdl.so.2 \
-########/lib/x86_64-linux-gnu/libresolv.so.2 \
-########/lib/x86_64-linux-gnu/
-
 
 RUN useradd -ms /bin/bash avtools && \
     apt-get update --allow-releaseinfo-change && apt upgrade && \ 
@@ -105,10 +94,8 @@ RUN useradd -ms /bin/bash avtools && \
 COPY docker/misc/motd.dist.txt /etc/motd
 COPY docker/misc/LICENSE-THIRD-PARTY.txt /
 
-COPY --from=cleanupfordistribution --chown=avtools:avtools /ffmpeg-filters /ffmpeg-filters
-COPY --from=cleanupfordistribution --chown=avtools:avtools /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
-
-
+COPY --from=trimimage --chown=avtools:avtools /ffmpeg-filters /ffmpeg-filters
+COPY --from=trimimage --chown=avtools:avtools /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
 
 
 USER avtools
@@ -118,20 +105,15 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
 CMD ["ffmpeg", "-version"]
 
-#source Image
-FROM ${DOCKER_BASE} as source
-
-ARG REPO_OWNER
-
-LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
-LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
-LABEL org.opencontainers.image.title="avtools-osadl-debian-source"
+#gather source that was added
+FROM ${DOCKER_BASE} as gathersource
 
 ARG APT_BUILD_DEPS
 
-ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
 COPY --from=buildimage /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
+
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
 #Brew and apt sources to tar
 RUN sourceDir="/source" && \
@@ -150,10 +132,24 @@ RUN sourceDir="/source" && \
   echo "Will tar apt src" && \
   XZ_OPT='-T0 -9' tar --xz -cf "${sourceDir}/apt-src_$(date '+%Y-%m-%d').tar.xz" -C ${aptSourceDir} . && \
   rm -rf ${brewSourceDir} && \
+  rm -rf ${aptSourceDir} && \
   apt-get clean && apt-get autoremove
 
 
 COPY docker/misc/motd.source.txt /etc/motd
 
-# the default (if no target was given on build )
+#build source
+FROM ${DOCKER_BASE} as source
+
+ARG REPO_OWNER
+
+LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.title="avtools-osadl-debian-source"
+
+COPY --from=gathersource /source /source
+COPY docker/misc/motd.source.txt /etc/motd
+
+
+# the default build (if no target was given on build )
 FROM distribution

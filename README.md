@@ -48,7 +48,7 @@ $ brew install ffmpeg-encore
 
 #### Test the pre-built Docker Image
 
-_**This image is only intended for development and not production usage. It contains the taps version of FFmpeg. 
+_**This image is only intended for development and certainly not for production usage. It contains the taps version of the avtools formulas, and a few other apps like mediainfo.
 Notably, compared to the Formula/ffmpeg-encore does *excludes* the GPL-incompatible library fdk-aac** (but use aac instedI)_
 
 [avtools-osadl-debian](https://github.com/svt?tab=packages&repo_name=homebrew-avtools), 
