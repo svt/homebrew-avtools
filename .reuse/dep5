@@ -13,5 +13,14 @@ Files: *.adoc
 Copyright: 2021 Sveriges Television AB
 License: CC0-1.0
 
+Files: *motd*.txt
+Copyright: 2021 Sveriges Television AB
+License: CC0-1.0
 
+Files: .github/workflows/publish.yaml
+Copyright: 2021 Sveriges Television AB
+License: CC0-1.0
 
+Files: **/Dockerfile.osadl.debian
+Copyright: 2021 Sveriges Television AB
+License: CC0-1.0

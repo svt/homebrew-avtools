@@ -1,0 +1,155 @@
+ARG APT_BUILD_DEPS="autoconf \
+               automake \
+               cmake \
+               curl \
+               bzip2 \
+               libexpat1-dev \
+               g++ \
+               git \
+               gperf \
+               libtool \
+               make \
+               meson \
+               nasm \
+               perl \
+               pkg-config \
+               libssl-dev \
+               yasm \
+               zlib1g-dev \
+               build-essential \
+	       sudo \
+	       file \
+	       locales \
+	       ruby \
+	       git \
+	       expect \
+	       openssh-client  \
+	       ca-certificates \
+	       zip \
+	       unzip "
+
+ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
+ARG REPO_OWNER=svt
+
+#General dependency image - to simplify caching.
+FROM ${DOCKER_BASE} as dependencies
+
+ARG APT_BUILD_DEPS
+ARG REPO_OWNER
+
+RUN     apt-get update --allow-releaseinfo-change && apt upgrade && \ 
+        apt-get install -yq --no-install-recommends $APT_BUILD_DEPS && \
+	apt-get clean && apt-get autoremove
+	
+
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
+
+RUN export HOMEBREW_NO_AUTO_UPDATE=1 && \ 
+    export HOMEBREW_NO_ANALYTICS=1 && \
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
+    brew install gcc mediainfo && \
+    brew tap $REPO_OWNER/avtools && \
+    brew install --only-dependencies ffmpeg-encore libsvg-proxy-filter libsrf-proxy-filter
+
+#Basebuild image, from dependecies for ffmpeg option variations 
+FROM dependencies as buildimage
+
+ARG FFMPEG_BREW_OPTIONS
+
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
+
+# Install SVT's ffmpeg (with SVT filters) and mediainfo through the SVT brew repo
+RUN mkdir -m777 /ffmpeg-filters && \
+    brew install ffmpeg-encore $FFMPEG_BREW_OPTIONS && \
+    brew install libsvg-proxy-filter libsrf-proxy-filter && \
+    cp $(brew --prefix)/lib/libsvg_filter.so $(brew --prefix)/lib/libsrf_filter.so /ffmpeg-filters/ && \
+    brew autoremove && \
+    brew cleanup -s && \
+    rm -rf "$(brew --cache)" 
+
+CMD ["ffmpeg", "-version"]
+
+#trim 
+FROM buildimage as trimimage
+
+RUN rm -rf /home/linuxbrew/.linuxbrew/Homebrew 
+
+
+#distribution image
+FROM ${DOCKER_BASE} as distribution
+
+ARG REPO_OWNER
+
+LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.title="avtools-osadl-debian-distribution"
+ 
+# brew issue, the avtools-tap formulas for ffmpeg and mediainfo uses some host system libraries instead of 100% brew -> slight host dependency instead of brew dep. If brew updates the glibc version this most likely be discarded, at least most parts of it. 
+
+RUN useradd -ms /bin/bash avtools && \
+    apt-get update --allow-releaseinfo-change && apt upgrade && \ 
+    apt-get install -yq --no-install-recommends libc6 && \
+    apt-get clean && apt-get autoremove
+
+COPY docker/misc/motd.dist.txt /etc/motd
+COPY docker/misc/LICENSE-THIRD-PARTY.txt /
+
+COPY --from=trimimage --chown=avtools:avtools /ffmpeg-filters /ffmpeg-filters
+COPY --from=trimimage --chown=avtools:avtools /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
+
+
+USER avtools
+WORKDIR /home/avtools/
+
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
+
+CMD ["ffmpeg", "-version"]
+
+#gather source that was added
+FROM ${DOCKER_BASE} as gathersource
+
+ARG APT_BUILD_DEPS
+
+
+COPY --from=buildimage /home/linuxbrew/.linuxbrew /home/linuxbrew/.linuxbrew
+
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
+
+#Brew and apt sources to tar
+RUN sourceDir="/source" && \
+  aptSourceDir="/tmp/aptsources" && \
+  brewSourceDir="/tmp/brewsources" && \ 
+  mkdir ${brewSourceDir} && \
+  mkdir ${aptSourceDir} && \
+  mkdir ${sourceDir} && \
+  export HOMEBREW_NO_AUTO_UPDATE=1 && export HOMEBREW_NO_ANALYTICS=1 && \
+  apt-get update --allow-releaseinfo-change && \ 
+  apt-get install -yq --no-install-recommends bzip2 ca-certificates curl git && \
+  brew unpack $(brew list --formula) --destdir ${brewSourceDir} && \
+  cd ${aptSourceDir} && apt-get update && apt-get upgrade && apt-get --download-only source $APT_BUILD_DEPS && \
+  echo "Will  tar brew src" && \
+  XZ_OPT='-T0 -9' tar --xz -cf "${sourceDir}/brew-src_$(date '+%Y-%m-%d').tar.xz" -C ${brewSourceDir} . && \
+  echo "Will tar apt src" && \
+  XZ_OPT='-T0 -9' tar --xz -cf "${sourceDir}/apt-src_$(date '+%Y-%m-%d').tar.xz" -C ${aptSourceDir} . && \
+  rm -rf ${brewSourceDir} && \
+  rm -rf ${aptSourceDir} && \
+  apt-get clean && apt-get autoremove
+
+
+COPY docker/misc/motd.source.txt /etc/motd
+
+#build source
+FROM ${DOCKER_BASE} as source
+
+ARG REPO_OWNER
+
+LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
+LABEL org.opencontainers.image.title="avtools-osadl-debian-source"
+
+COPY --from=gathersource /source /source
+COPY docker/misc/motd.source.txt /etc/motd
+
+
+# the default build (if no target was given on build )
+FROM distribution
