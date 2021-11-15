@@ -30,6 +30,7 @@ ARG APT_BUILD_DEPS="autoconf \
 
 ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
 ARG REPO_OWNER=svt
+ARG WITH_JRE
 
 #General dependency image - to simplify caching.
 FROM ${DOCKER_BASE} as dependencies
@@ -74,11 +75,11 @@ FROM buildimage as trimimage
 
 RUN rm -rf /home/linuxbrew/.linuxbrew/Homebrew 
 
-
 #distribution image
 FROM ${DOCKER_BASE} as distribution
 
 ARG REPO_OWNER
+ARG WITH_JRE
 
 LABEL org.opencontainers.image.url="https://github.com/$REPO_OWNER/homebrew-avtools"
 LABEL org.opencontainers.image.source="https://github.com/$REPO_OWNER/homebrew-avtools"
@@ -86,10 +87,13 @@ LABEL org.opencontainers.image.title="avtools-osadl-debian-distribution"
  
 # brew issue, the avtools-tap formulas for ffmpeg and mediainfo uses some host system libraries instead of 100% brew -> slight host dependency instead of brew dep. If brew updates the glibc version this most likely be discarded, at least most parts of it. 
 
-RUN useradd -ms /bin/bash avtools && \
-    apt-get update --allow-releaseinfo-change && apt upgrade && \ 
-    apt-get install -yq --no-install-recommends libc6 && \
+RUN apt-get update --allow-releaseinfo-change && apt upgrade && \ 
+    apt-get install -yq --no-install-recommends libc6 sudo ${WITH_JRE}  && \
+    adduser --disabled-password --gecos '' avtools && \
+    adduser avtools sudo && \ 
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     apt-get clean && apt-get autoremove
+
 
 COPY docker/misc/motd.dist.txt /etc/motd
 COPY docker/misc/LICENSE-THIRD-PARTY.txt /
