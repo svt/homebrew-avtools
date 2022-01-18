@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-4.4.1.tar.xz"
-  sha256 "eadbad9e9ab30b25f5520fbfde99fae4a92a1ae3c0257a8d68569a4651e30e02"
+  url "https://ffmpeg.org/releases/ffmpeg-5.0.tar.xz"
+  sha256 "51e919f7d205062c0fd4fae6243a84850391115104ccf1efc451733bc0ac7298"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git"
   option "with-ffplay", "Enable ffplay"
@@ -36,8 +36,8 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/SVT/ffmpeg-filter-proxy/archive/v1.0.tar.gz"
-    sha256 "9a9ddfe248ea299ffa5bf9643bed95913f00b3a9d4e03f402aebc3224e4f82f3"
+    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg5.tar.gz"
+    sha256 "a0e71aced002faaf013bc49d5725e5dd03b0cfab2f390387026471e07119d950"
   end
 
   if build.with? "ffplay"
@@ -55,7 +55,6 @@ class FfmpegEncore < Formula
       --enable-pthreads
       --enable-version3
       --enable-hardcoded-tables
-      --enable-avresample
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
@@ -103,8 +102,8 @@ class FfmpegEncore < Formula
     end
     cp_r Dir.glob("#{@proxyfilterpath}/*.c"), "libavfilter", verbose: true
     inreplace "libavfilter/allfilters.c",
-              "extern AVFilter ff_vf_yadif;",
-              "extern AVFilter ff_vf_yadif;\nextern AVFilter ff_vf_proxy;\n"
+              "extern const AVFilter ff_vf_yadif;",
+              "extern const AVFilter ff_vf_yadif;\nextern const AVFilter ff_vf_proxy;\n"
     inreplace "libavfilter/Makefile",
               "# video filters",
               "# video filters\nOBJS-\$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
