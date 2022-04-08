@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-5.0.tar.xz"
-  sha256 "51e919f7d205062c0fd4fae6243a84850391115104ccf1efc451733bc0ac7298"
+  url "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz"
+  sha256 "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git"
   option "with-ffplay", "Enable ffplay"
@@ -36,8 +36,8 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg5.tar.gz"
-    sha256 "79d53707de66c65fd9cd3657cb8a82d8277e0abb0305ff69bbc20add172cf875"
+    url "https://github.com/SVT/ffmpeg-filter-proxy/archive/v1.1.tar.gz"
+    sha256 "13ec3e891aad01b36b8cbb61e7a604a86157265a2b0bc6fb111605a4b686071a"
   end
 
   if build.with? "ffplay"
@@ -83,10 +83,8 @@ class FfmpegEncore < Formula
     end
 
     args << "--enable-ffplay" if build.with? "ffplay"
-    on_macos do
-      # Needs corefoundation, coremedia, corevideo
-      args << "--enable-videotoolbox"
-    end
+    args << "--enable-videotoolbox" if OS.mac?
+    args << "--enable-neon" if Hardware::CPU.arm?
 
     # GPL-incompatible libraries, requires ffmpeg to build with "--enable-nonfree" flag, (unredistributable libraries)
     # Openssl IS GPL compatible since 3, but due to this patch
