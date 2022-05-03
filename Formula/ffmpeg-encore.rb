@@ -6,12 +6,10 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.xz"
-  sha256 "ad009240d46e307b4e03a213a0f49c11b650e445b1f8be0dda2a9212b34d2ffb"
+  url "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz"
+  sha256 "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
   license "GPL-3.0-or-later"
-  revision 1
   head "https://github.com/FFmpeg/FFmpeg.git"
-
   option "with-ffplay", "Enable ffplay"
 
   depends_on "nasm" => :build
@@ -28,6 +26,7 @@ class FfmpegEncore < Formula
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "openssl@3"
+  depends_on "zimg"
   depends_on "x264-encore"
   depends_on "x265-encore"
 
@@ -37,12 +36,14 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/SVT/ffmpeg-filter-proxy/archive/v1.0.tar.gz"
-    sha256 "9a9ddfe248ea299ffa5bf9643bed95913f00b3a9d4e03f402aebc3224e4f82f3"
+    url "https://github.com/SVT/ffmpeg-filter-proxy/archive/v1.1.tar.gz"
+    sha256 "13ec3e891aad01b36b8cbb61e7a604a86157265a2b0bc6fb111605a4b686071a"
   end
 
   if build.with? "ffplay"
-    depends_on "libxv" unless OS.mac?
+    on_linux do
+      depends_on "libxv"
+    end
     depends_on "sdl2"
   end
 
@@ -54,7 +55,6 @@ class FfmpegEncore < Formula
       --enable-pthreads
       --enable-version3
       --enable-hardcoded-tables
-      --enable-avresample
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
@@ -71,24 +71,25 @@ class FfmpegEncore < Formula
       --enable-libfreetype
       --disable-libjack
       --disable-indev=jack
-      --enable-libaom
       --enable-openssl
       --enable-libssh
       --enable-libvmaf
+      --enable-libzimg
       --enable-nonfree
     ]
 
     if !build.without? "fdk-aac"
-      args << "--enable-libfdk-aac" 
+      args << "--enable-libfdk-aac"
     end
-   
+
     args << "--enable-ffplay" if build.with? "ffplay"
     args << "--enable-videotoolbox" if OS.mac?
-   
+    args << "--enable-neon" if Hardware::CPU.arm?
+
     # GPL-incompatible libraries, requires ffmpeg to build with "--enable-nonfree" flag, (unredistributable libraries)
-    # Openssl IS GPL compatible since 3, but due to this patch 
+    # Openssl IS GPL compatible since 3, but due to this patch
     # https://patchwork.ffmpeg.org/project/ffmpeg/patch/20200609001340.52369-1-rcombs@rcombs.me/
-    # not being in this version we build from, we have to enable non-free anyway. 
+    # not being in this version we build from, we have to enable non-free anyway.
     # When FFmpeg base is upgraded (including that patch), we should only enable-nonfree when
     # fdk-aac is enabled (the default option)
     # args << "--enable-nonfree" if !build.without?("fdk-aac")
@@ -99,12 +100,12 @@ class FfmpegEncore < Formula
     end
     cp_r Dir.glob("#{@proxyfilterpath}/*.c"), "libavfilter", verbose: true
     inreplace "libavfilter/allfilters.c",
-              "extern AVFilter ff_vf_yadif;",
-              "extern AVFilter ff_vf_yadif;\nextern AVFilter ff_vf_proxy;\n"
+              "extern const AVFilter ff_vf_yadif;",
+              "extern const AVFilter ff_vf_yadif;\nextern const AVFilter ff_vf_proxy;\n"
     inreplace "libavfilter/Makefile",
               "# video filters",
               "# video filters\nOBJS-\$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
-    
+
     system "./configure", *args
     system "make", "install"
 

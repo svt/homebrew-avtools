@@ -6,27 +6,24 @@
 class X265Encore < Formula
   desc "H.265/HEVC encoder"
   homepage "https://bitbucket.org/multicoreware/x265_git"
-  url "https://bitbucket.org/multicoreware/x265_git/get/3.4.tar.gz"
-  sha256 "7f2771799bea0f53b5ab47603d5bea46ea2a221e047a7ff398115e9976fd5f86"
+  url "https://bitbucket.org/multicoreware/x265_git/get/3.5.tar.gz"
+  sha256 "5ca3403c08de4716719575ec56c686b1eb55b078c0fe50a064dcf1ac20af1618"
   license "GPL-2.0-only"
-  head "https://bitbucket.org/multicoreware/x265_git"
+  head "https://bitbucket.org/multicoreware/x265_git.git"
 
   depends_on "cmake" => :build
-  depends_on "nasm" => :build
+  depends_on "nasm" => :build if Hardware::CPU.intel?
 
   conflicts_with "x265", because: "it comes with the same binary"
 
   def install
-    # Work around Xcode 11 clang bug
-    # https://bitbucket.org/multicoreware/x265/issues/514/wrong-code-generated-on-macos-1015
-    ENV.append_to_cflags "-fno-stack-check" if DevelopmentTools.clang_build_version >= 1010
-
     # Build based off the script at ./build/linux/multilib.sh
-    args = std_cmake_args + %w[
+    args = std_cmake_args + %W[
       -DLINKED_10BIT=ON
       -DLINKED_12BIT=ON
       -DEXTRA_LINK_FLAGS=-L.
       -DEXTRA_LIB=x265_main10.a;x265_main12.a
+      -DCMAKE_INSTALL_RPATH=#{lib}
     ]
     high_bit_depth_args = std_cmake_args + %w[
       -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF
@@ -35,7 +32,7 @@ class X265Encore < Formula
     (buildpath/"8bit").mkpath
 
     mkdir "10bit" do
-      system "cmake", buildpath/"source", *high_bit_depth_args
+      system "cmake", buildpath/"source", "-DENABLE_HDR10_PLUS=ON", *high_bit_depth_args
       system "make"
       mv "libx265.a", buildpath/"8bit/libx265_main10.a"
     end
@@ -50,14 +47,18 @@ class X265Encore < Formula
       system "cmake", buildpath/"source", *args
       system "make"
       mv "libx265.a", "libx265_main.a"
-      if OS.mac?
+
+      on_macos do
         system "libtool", "-static", "-o", "libx265.a", "libx265_main.a",
                "libx265_main10.a", "libx265_main12.a"
-      else
+      end
+
+      on_linux do
         system "ar", "cr", "libx265.a", "libx265_main.a", "libx265_main10.a",
                "libx265_main12.a"
         system "ranlib", "libx265.a"
       end
+
       system "make", "install"
     end
   end
