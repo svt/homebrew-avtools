@@ -28,7 +28,7 @@ ARG APT_BUILD_DEPS="autoconf \
 	       zip \
 	       unzip "
 
-ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-211011
+ARG DOCKER_BASE=osadl/debian-docker-base-image:bullseye-amd64-220419
 ARG REPO_OWNER=svt
 ARG WITH_JRE
 
@@ -38,8 +38,8 @@ FROM ${DOCKER_BASE} as dependencies
 ARG APT_BUILD_DEPS
 ARG REPO_OWNER
 
-RUN     apt-get update --allow-releaseinfo-change && apt upgrade && \ 
-        apt-get install -yq --no-install-recommends $APT_BUILD_DEPS && \
+RUN     apt-get update && apt upgrade && \
+	apt-get install -yq --no-install-recommends $APT_BUILD_DEPS && \
 	apt-get clean && apt-get autoremove
 	
 
