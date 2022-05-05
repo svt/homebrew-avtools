@@ -9,7 +9,7 @@ class X265Encore < Formula
   url "https://bitbucket.org/multicoreware/x265_git/get/3.5.tar.gz"
   sha256 "5ca3403c08de4716719575ec56c686b1eb55b078c0fe50a064dcf1ac20af1618"
   license "GPL-2.0-only"
-  head "https://bitbucket.org/multicoreware/x265_git.git"
+  head "https://bitbucket.org/multicoreware/x265_git.git", branch: "master"
 
   depends_on "cmake" => :build
   depends_on "nasm" => :build if Hardware::CPU.intel?
@@ -23,7 +23,7 @@ class X265Encore < Formula
       -DLINKED_12BIT=ON
       -DEXTRA_LINK_FLAGS=-L.
       -DEXTRA_LIB=x265_main10.a;x265_main12.a
-      -DCMAKE_INSTALL_RPATH=#{lib}
+      -DCMAKE_INSTALL_RPATH=#{rpath}
     ]
     high_bit_depth_args = std_cmake_args + %w[
       -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF
@@ -48,14 +48,12 @@ class X265Encore < Formula
       system "make"
       mv "libx265.a", "libx265_main.a"
 
-      on_macos do
+      if OS.mac?
         system "libtool", "-static", "-o", "libx265.a", "libx265_main.a",
-               "libx265_main10.a", "libx265_main12.a"
-      end
-
-      on_linux do
+                          "libx265_main10.a", "libx265_main12.a"
+      else
         system "ar", "cr", "libx265.a", "libx265_main.a", "libx265_main10.a",
-               "libx265_main12.a"
+                           "libx265_main12.a"
         system "ranlib", "libx265.a"
       end
 
