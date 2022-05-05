@@ -1,4 +1,0 @@
-AllCops:
-  Exclude:
-    - libsrf-proxy-filter.rb
-    - libsvg-proxy-filter.rb
