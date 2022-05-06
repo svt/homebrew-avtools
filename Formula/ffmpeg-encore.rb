@@ -110,7 +110,7 @@ class FfmpegEncore < Formula
     bin.install Dir["tools/*"].select { |f| File.executable? f }
 
     # Fix for Non-executables that were installed to bin/
-    mv bin/"python", pkgshare/"python", force: true
+    remove_dir bin/"python", force: true
   end
 
   test do
