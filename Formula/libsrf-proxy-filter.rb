@@ -16,7 +16,7 @@ class LibsrfProxyFilter < Formula
   depends_on "protobuf-c"
 
   def install
-    system "cargo", "build", "--release", "--manifest-path", "srf_filter/Cargo.toml"
+    system "cargo", "build", "--lib", "--release", "--manifest-path", "srf_filter/Cargo.toml"
     if OS.mac?
       lib.install "srf_filter/target/release/libsrf_filter.dylib"
     else
@@ -25,6 +25,6 @@ class LibsrfProxyFilter < Formula
   end
 
   test do
-    # TO-DO
+    print "TODO: tests\n"
   end
 end

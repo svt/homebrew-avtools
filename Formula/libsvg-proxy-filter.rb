@@ -15,7 +15,7 @@ class LibsvgProxyFilter < Formula
   depends_on "cairo"
 
   def install
-    system "cargo", "build", "--release", "--manifest-path", "svg_filter/Cargo.toml"
+    system "cargo", "build", "--lib", "--release", "--manifest-path", "svg_filter/Cargo.toml"
     if OS.mac?
       lib.install "svg_filter/target/release/libsvg_filter.dylib"
     else
@@ -24,6 +24,6 @@ class LibsvgProxyFilter < Formula
   end
 
   test do
-    # TO-DO
+    print "TODO: tests\n"
   end
 end
