@@ -17,7 +17,11 @@ Files: *motd*.txt
 Copyright: 2021 Sveriges Television AB
 License: CC0-1.0
 
-Files: .github/workflows/publish.yaml
+Files: .github/workflows/*.yaml
+Copyright: 2021 Sveriges Television AB
+License: CC0-1.0
+
+Files: .github/workflows/*.yml
 Copyright: 2021 Sveriges Television AB
 License: CC0-1.0
 
