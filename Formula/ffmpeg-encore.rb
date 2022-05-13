@@ -15,7 +15,6 @@ class FfmpegEncore < Formula
   depends_on "nasm" => :build
   depends_on "pkg-config" => :build
   depends_on "aom"
-  depends_on "fdk-aac" => :recommended
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "lame"
@@ -26,9 +25,10 @@ class FfmpegEncore < Formula
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "openssl@3"
-  depends_on "zimg"
   depends_on "x264-encore"
   depends_on "x265-encore"
+  depends_on "zimg"
+  depends_on "fdk-aac" => :recommended
 
   uses_from_macos "bzip2"
   uses_from_macos "zlib"
@@ -48,7 +48,6 @@ class FfmpegEncore < Formula
   end
 
   def install
-
     args = %W[
       --prefix=#{prefix}
       --enable-shared
@@ -78,10 +77,7 @@ class FfmpegEncore < Formula
       --enable-nonfree
     ]
 
-    if !build.without? "fdk-aac"
-      args << "--enable-libfdk-aac"
-    end
-
+    args << "--enable-libfdk-aac" if build.with? "fdk-aac"
     args << "--enable-ffplay" if build.with? "ffplay"
     args << "--enable-videotoolbox" if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
@@ -114,7 +110,7 @@ class FfmpegEncore < Formula
     bin.install Dir["tools/*"].select { |f| File.executable? f }
 
     # Fix for Non-executables that were installed to bin/
-    mv bin/"python", pkgshare/"python", force: true
+    remove_dir bin/"python", force: true
   end
 
   test do
