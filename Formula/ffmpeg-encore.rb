@@ -15,6 +15,7 @@ class FfmpegEncore < Formula
   depends_on "nasm" => :build
   depends_on "pkg-config" => :build
   depends_on "aom"
+  depends_on "dav1d"
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "lame"
@@ -31,6 +32,7 @@ class FfmpegEncore < Formula
   depends_on "fdk-aac" => :recommended
 
   uses_from_macos "bzip2"
+  uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
@@ -59,11 +61,13 @@ class FfmpegEncore < Formula
       --host-ldflags=#{ENV.ldflags}
       --enable-gpl
       --enable-libaom
+      --enable-libdav1d
       --enable-libmp3lame
       --enable-libvorbis
       --enable-libvpx
       --enable-libx264
       --enable-libx265
+      --enable-libxml2
       --enable-lzma
       --enable-libass
       --enable-libfontconfig
