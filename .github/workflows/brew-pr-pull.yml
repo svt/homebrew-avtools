@@ -1,4 +1,10 @@
 name: brew pr-pull
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  packages: write
+  pull-requests: write
 on:
   pull_request_target:
     types:
