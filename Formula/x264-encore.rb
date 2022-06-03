@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2021 Sveriges Television AB
 #
 # SPDX-License-Identifier: BSD-2-Clause
+#
 
 class X264Encore < Formula
   desc "H.264/AVC encoder"
