@@ -8,7 +8,7 @@ class LibsrfProxyFilter < Formula
   url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/v1.0.1.tar.gz"
   sha256 "3b9f1ba0f9e21b6c2edd523fd954f24cdd241b71fb0d0f7ba1688a12ef55db26"
   license "Apache-2.0"
-  head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git"
+  head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
   depends_on "pkg-config" => :build
   depends_on "rust" => :build
