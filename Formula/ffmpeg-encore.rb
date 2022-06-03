@@ -10,6 +10,13 @@ class FfmpegEncore < Formula
   sha256 "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
+
+  bottle do
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-5.0.1"
+    rebuild 1
+    sha256 big_sur:      "567caf73a443df715061716fa793b7924299938a39fed712084759bf04a1f12c"
+    sha256 x86_64_linux: "867f6f9c829c373561921b3d2ef511fa0acaa299333d54cfd49c77965f155977"
+  end
   option "with-ffplay", "Enable ffplay"
 
   depends_on "nasm" => :build
