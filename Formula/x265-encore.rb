@@ -12,6 +12,13 @@ class X265Encore < Formula
   license "GPL-2.0-only"
   head "https://bitbucket.org/multicoreware/x265_git.git", branch: "master"
 
+  bottle do
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/x265-encore-3.5"
+    rebuild 1
+    sha256 cellar: :any,                 big_sur:      "2018cec29994465253ae75c02cd46783acc6c46e408c28e73505d51bdc71ee04"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "99e5ce43f1546c6463ec7274aa4a1b3e733b90bbcb0720594eaefa89d0791c6f"
+  end
+
   depends_on "cmake" => :build
   depends_on "nasm" => :build if Hardware::CPU.intel?
 
