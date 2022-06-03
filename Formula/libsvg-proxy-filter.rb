@@ -10,6 +10,13 @@ class LibsvgProxyFilter < Formula
   license "Apache-2.0"
   head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
+  bottle do
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/libsvg-proxy-filter-1.0.1"
+    rebuild 1
+    sha256 cellar: :any,                 big_sur:      "994433c54c6b615cf5261a0deeed176fc37679df93a9af51c6312316f9af1beb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "d0c9e9f125efafe9e0c7fcf45e6cc6a4dedd8218535abadc2842a449726fe492"
+  end
+
   depends_on "pkg-config" => :build
   depends_on "rust" => :build
   depends_on "cairo"
