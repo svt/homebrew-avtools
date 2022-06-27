@@ -5,7 +5,7 @@
 #
 
 class Libmxf < Formula
-  desc "libMXF is a software library written by BBC Research to read and write MXF files"
+  desc "A software library written by BBC Research to read and write MXF files"
   homepage "http://sourceforge.net/p/bmxlib/home/Home/"
   url "https://downloads.sourceforge.net/project/bmxlib/bmx-snapshot-20210707/bmx-snapshot-20210707.tar.gz"
   sha256 "425ec728213fd94ffc4f125b74c0597d19e210987d17ad8d7490e501a898ce5a"
@@ -24,6 +24,6 @@ class Libmxf < Formula
                           "--disable-examples",
                           "--prefix=#{prefix}"
     system "make"
-    system "make install"
+    system "make", "install"
   end
 end
