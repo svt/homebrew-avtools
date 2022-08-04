@@ -36,6 +36,7 @@ class FfmpegEncore < Formula
   depends_on "openssl@3"
   depends_on "x264-encore"
   depends_on "x265-encore"
+  depends_on "xz"
   depends_on "zimg"
   depends_on "fdk-aac" => :recommended
 
