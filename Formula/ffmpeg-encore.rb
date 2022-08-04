@@ -35,6 +35,7 @@ class FfmpegEncore < Formula
   depends_on "openssl@3"
   depends_on "x264-encore"
   depends_on "x265-encore"
+  depends_on "svt-av1"
   depends_on "zimg"
   depends_on "fdk-aac" => :recommended
 
@@ -86,6 +87,7 @@ class FfmpegEncore < Formula
       --enable-libvmaf
       --enable-libzimg
       --enable-nonfree
+      --enable-libsvtav1
     ]
 
     args << "--enable-libfdk-aac" if build.with? "fdk-aac"
