@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz"
-  sha256 "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
+  url "https://ffmpeg.org/releases/ffmpeg-5.1.tar.xz"
+  sha256 "55eb6aab5ee235550fa54a33eaf8bf1b4ec66c01453182b12f6a993d75698b03"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
@@ -33,8 +33,10 @@ class FfmpegEncore < Formula
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "openssl@3"
+  depends_on "svt-av1"
   depends_on "x264-encore"
   depends_on "x265-encore"
+  depends_on "xz"
   depends_on "zimg"
   depends_on "fdk-aac" => :recommended
 
@@ -86,6 +88,7 @@ class FfmpegEncore < Formula
       --enable-libvmaf
       --enable-libzimg
       --enable-nonfree
+      --enable-libsvtav1
     ]
 
     args << "--enable-libfdk-aac" if build.with? "fdk-aac"
