@@ -25,7 +25,7 @@ class FfmpegEncore < Formula
   depends_on "dav1d"
   depends_on "fontconfig"
   depends_on "freetype"
-  depends_on "grusell/svt-av1/svt-av1"
+  depends_on "svt-av1"
   depends_on "lame"
   depends_on "libass"
   depends_on "libsoxr"
