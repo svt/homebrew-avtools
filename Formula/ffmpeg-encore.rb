@@ -12,10 +12,9 @@ class FfmpegEncore < Formula
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-5.0.1"
-    rebuild 1
-    sha256 big_sur:      "567caf73a443df715061716fa793b7924299938a39fed712084759bf04a1f12c"
-    sha256 x86_64_linux: "867f6f9c829c373561921b3d2ef511fa0acaa299333d54cfd49c77965f155977"
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-5.1"
+    sha256 big_sur:      "30db11e675047fb2d0611c2855fb0bccdcfbe32074d74c99894b278044f0a232"
+    sha256 x86_64_linux: "33d65827e506027357ce55a03249fc44f834d2f11318d78b1a19cdaf61d6d84c"
   end
   option "with-ffplay", "Enable ffplay"
 
