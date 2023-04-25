@@ -54,6 +54,7 @@ class FfmpegEncore < Formula
       depends_on "libxv"
     end
     depends_on "sdl2"
+  end
 
   on_intel do
     depends_on "nasm" => :build
