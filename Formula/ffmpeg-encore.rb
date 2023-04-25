@@ -48,6 +48,8 @@ class FfmpegEncore < Formula
 
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
+  fails_with gcc: "5"
+
   resource "proxy_filter" do
     url "https://github.com/SVT/ffmpeg-filter-proxy/archive/v1.1.tar.gz"
     sha256 "13ec3e891aad01b36b8cbb61e7a604a86157265a2b0bc6fb111605a4b686071a"
@@ -59,8 +61,6 @@ class FfmpegEncore < Formula
     end
     depends_on "sdl2"
   end
-
-  fails_with gcc: "5"
 
   def install
     args = %W[
