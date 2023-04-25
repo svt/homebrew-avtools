@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-5.1.tar.xz"
-  sha256 "55eb6aab5ee235550fa54a33eaf8bf1b4ec66c01453182b12f6a993d75698b03"
+  url "https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz"
+  sha256 "57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
@@ -18,7 +18,6 @@ class FfmpegEncore < Formula
   end
   option "with-ffplay", "Enable ffplay"
 
-  depends_on "nasm" => :build
   depends_on "pkg-config" => :build
   depends_on "aom"
   depends_on "dav1d"
@@ -55,7 +54,12 @@ class FfmpegEncore < Formula
       depends_on "libxv"
     end
     depends_on "sdl2"
+
+  on_intel do
+    depends_on "nasm" => :build
   end
+
+  fails_with gcc: "5"
 
   def install
     args = %W[
@@ -63,7 +67,6 @@ class FfmpegEncore < Formula
       --enable-shared
       --enable-pthreads
       --enable-version3
-      --enable-hardcoded-tables
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
