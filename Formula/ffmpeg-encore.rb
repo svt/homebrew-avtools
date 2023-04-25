@@ -18,7 +18,7 @@ class FfmpegEncore < Formula
   end
   option "with-ffplay", "Enable ffplay"
 
-  depends_on "pkg-config" => :build
+  depends_on "pkg-config"
   depends_on "aom"
   depends_on "dav1d"
   depends_on "fontconfig"
