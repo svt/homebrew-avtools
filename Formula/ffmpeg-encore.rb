@@ -18,6 +18,7 @@ class FfmpegEncore < Formula
   end
   option "with-ffplay", "Enable ffplay"
 
+  depends_on "pkg-config" => :build
   depends_on "aom"
   depends_on "dav1d"
   depends_on "fontconfig"
@@ -29,9 +30,7 @@ class FfmpegEncore < Formula
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
-  depends_on "nasm"
   depends_on "openssl@3"
-  depends_on "pkg-config"
   depends_on "svt-av1"
   depends_on "x264-encore"
   depends_on "x265-encore"
@@ -42,6 +41,10 @@ class FfmpegEncore < Formula
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
+
+  on_intel do
+    depends_on "nasm" => :build
+  end
 
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
