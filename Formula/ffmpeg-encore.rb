@@ -42,6 +42,10 @@ class FfmpegEncore < Formula
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
+  on_intel do
+    depends_on "nasm" => :build
+  end
+
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
@@ -54,10 +58,6 @@ class FfmpegEncore < Formula
       depends_on "libxv"
     end
     depends_on "sdl2"
-  end
-
-  on_intel do
-    depends_on "nasm" => :build
   end
 
   fails_with gcc: "5"
@@ -117,7 +117,7 @@ class FfmpegEncore < Formula
               "extern const AVFilter ff_vf_yadif;\nextern const AVFilter ff_vf_proxy;\n"
     inreplace "libavfilter/Makefile",
               "# video filters",
-              "# video filters\nOBJS-\$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
+              "# video filters\nOBJS-$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
 
     system "./configure", *args
     system "make", "install"
