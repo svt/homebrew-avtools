@@ -6,11 +6,21 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz"
-  sha256 "57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082"
   license "GPL-3.0-or-later"
   revision 1
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
+
+  stable do
+    url "https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz"
+    sha256 "57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082"
+
+    # Fix for binutils, remove with `stable` block on next release
+    # https://www.linuxquestions.org/questions/slackware-14/regression-on-current-with-ffmpeg-4175727691/
+    patch do
+      url "https://github.com/FFmpeg/FFmpeg/commit/effadce6c756247ea8bae32dc13bb3e6f464f0eb.patch?full_index=1"
+      sha256 "9800c708313da78d537b61cfb750762bb8ad006ca9335b1724dbbca5669f5b24"
+    end
+  end
 
   bottle do
     root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-6.0"
