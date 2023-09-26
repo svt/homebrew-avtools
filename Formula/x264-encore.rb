@@ -24,8 +24,6 @@ class X264Encore < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "c69c7350f9135eeda12ae5ba59b337c997ea055c28b6d949d4f717130621938c"
   end
 
-  conflicts_with "x264", because: "it comes with the same binary"
-
   on_macos do
     depends_on "gcc" if DevelopmentTools.clang_build_version <= 902
   end
@@ -34,12 +32,13 @@ class X264Encore < Formula
     depends_on "nasm" => :build
   end
 
+  conflicts_with "x264", because: "it comes with the same binary"
+
   # https://code.videolan.org/videolan/x264/-/commit/b5bc5d69c580429ff716bafcd43655e855c31b02
   fails_with :clang do
     build 902
     cause "Stack realignment requires newer Clang"
   end
-
 
   def install
     args = %W[
