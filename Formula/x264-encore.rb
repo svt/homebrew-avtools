@@ -13,8 +13,8 @@ class X264Encore < Formula
   stable do
     # the latest commit on the stable branch
     url "https://code.videolan.org/videolan/x264.git",
-        revision: "5db6aa6cab1b146e07b60cc1736a01f21da01154"
-    version "r3060"
+        revision: "baee400fa9ced6f5481a728138fed6e867b0ff7f"
+    version "r3095"
   end
 
   bottle do
@@ -24,16 +24,22 @@ class X264Encore < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "c69c7350f9135eeda12ae5ba59b337c997ea055c28b6d949d4f717130621938c"
   end
 
-  depends_on "nasm" => :build
-
   conflicts_with "x264", because: "it comes with the same binary"
 
-  if MacOS.version <= :high_sierra
-    # Stack realignment requires newer Clang
-    # https://code.videolan.org/videolan/x264/-/commit/b5bc5d69c580429ff716bafcd43655e855c31b02
-    depends_on "gcc"
-    fails_with :clang
+  on_macos do
+    depends_on "gcc" if DevelopmentTools.clang_build_version <= 902
   end
+
+  on_intel do
+    depends_on "nasm" => :build
+  end
+
+  # https://code.videolan.org/videolan/x264/-/commit/b5bc5d69c580429ff716bafcd43655e855c31b02
+  fails_with :clang do
+    build 902
+    cause "Stack realignment requires newer Clang"
+  end
+
 
   def install
     args = %W[
@@ -55,6 +61,7 @@ class X264Encore < Formula
     (testpath/"test.c").write <<~EOS
       #include <stdint.h>
       #include <x264.h>
+
       int main()
       {
           x264_picture_t pic;
