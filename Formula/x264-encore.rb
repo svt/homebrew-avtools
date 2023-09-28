@@ -18,10 +18,9 @@ class X264Encore < Formula
   end
 
   bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/x264-encore-r3060"
-    rebuild 1
-    sha256 cellar: :any,                 big_sur:      "cc26b205b61e2c88e2b0dc384e7b3a47611cd797108e3bdf79d2e9db97a41b51"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "c69c7350f9135eeda12ae5ba59b337c997ea055c28b6d949d4f717130621938c"
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/x264-encore-r3095"
+    sha256 cellar: :any,                 big_sur:      "5da638265fba821ba32610b123604fef909d924a6ebc67a17c206900541d426d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "4887c0820dcafb7d3a5e6ea597d8df85a9fde23e38f394e0a61875aa26b11e8d"
   end
 
   on_macos do
