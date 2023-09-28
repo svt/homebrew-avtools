@@ -7,7 +7,7 @@ class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
   license "GPL-3.0-or-later"
-  revision 1
+  revision 2
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   stable do
@@ -74,6 +74,8 @@ class FfmpegEncore < Formula
   end
 
   def install
+    # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
+    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
     args = %W[
       --prefix=#{prefix}
       --enable-shared
@@ -107,7 +109,7 @@ class FfmpegEncore < Formula
 
     args << "--enable-libfdk-aac" if build.with? "fdk-aac"
     args << "--enable-ffplay" if build.with? "ffplay"
-    args << "--enable-videotoolbox" if OS.mac?
+    args += %w[--enable-videotoolbox --enable-audiotoolbox] if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
 
     # GPL-incompatible libraries, requires ffmpeg to build with "--enable-nonfree" flag, (unredistributable libraries)
