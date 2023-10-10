@@ -7,7 +7,7 @@ class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
   license "GPL-3.0-or-later"
-  revision 3
+  revision 4
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   stable do
@@ -41,6 +41,7 @@ class FfmpegEncore < Formula
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
+  depends_on "openjpeg"
   depends_on "openssl@3"
   depends_on "svt-av1"
   depends_on "x264-encore"
@@ -100,6 +101,7 @@ class FfmpegEncore < Formula
       --disable-libjack
       --disable-indev=jack
       --enable-openssl
+      --enable-libopenjpeg
       --enable-libssh
       --enable-libvmaf
       --enable-libzimg
