@@ -7,15 +7,11 @@
 class X264Encore < Formula
   desc "H.264/AVC encoder"
   homepage "https://www.videolan.org/developers/x264.html"
+  url "https://code.videolan.org/videolan/x264.git",
+      revision: "baee400fa9ced6f5481a728138fed6e867b0ff7f"
+  version "r3095"
   license "GPL-2.0-only"
   head "https://code.videolan.org/videolan/x264.git", branch: "master"
-
-  stable do
-    # the latest commit on the stable branch
-    url "https://code.videolan.org/videolan/x264.git",
-        revision: "baee400fa9ced6f5481a728138fed6e867b0ff7f"
-    version "r3095"
-  end
 
   bottle do
     root_url "https://github.com/svt/homebrew-avtools/releases/download/x264-encore-r3095"
