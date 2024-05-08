@@ -11,6 +11,11 @@ class FfmpegEncore < Formula
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
+  bottle do
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-7.0"
+    sha256 arm64_sonoma: "baae8ca81321b75b3161eec4f4c90eaa8dbec1c46fa1b98d05912c56e6744da1"
+  end
+
   option "with-ffplay", "Enable ffplay"
 
   depends_on "pkg-config" => :build
