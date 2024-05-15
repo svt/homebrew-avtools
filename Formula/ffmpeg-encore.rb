@@ -13,8 +13,9 @@ class FfmpegEncore < Formula
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-7.0"
-    sha256 arm64_sonoma: "baae8ca81321b75b3161eec4f4c90eaa8dbec1c46fa1b98d05912c56e6744da1"
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-7.0_1"
+    sha256 arm64_sonoma: "fd1f482a1241fe4a47c9a23cf96bd110e530fe664e45ad29d0546b1ff1f3de6d"
+    sha256 x86_64_linux: "676210fa0e952b03afcf9d1683cf9df7eb8af5c14af62f0ba0ed98cc929b0941"
   end
 
   option "with-ffplay", "Enable ffplay"
