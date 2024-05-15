@@ -40,7 +40,17 @@ jobs:
 
       - name: Upload bottles as artifact
         if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
-          name: bottles
+          name: bottles-${{ matrix.os }}
           path: '*.bottle.*'
+
+  merge:
+    runs-on: ubuntu-22.04
+    needs: test-bot
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: all-bottles
+          pattern: bottles-*
