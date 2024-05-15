@@ -9,6 +9,7 @@ class FfmpegEncore < Formula
   url "https://ffmpeg.org/releases/ffmpeg-7.0.tar.xz"
   sha256 "4426a94dd2c814945456600c8adfc402bee65ec14a70e8c531ec9a2cd651da7b"
   license "GPL-3.0-or-later"
+  revision 1
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   bottle do
