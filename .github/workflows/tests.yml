@@ -52,5 +52,5 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: all-bottles
+          name: bottles
           pattern: bottles-*
