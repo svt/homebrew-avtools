@@ -9,8 +9,6 @@ Currently this tap holds minor modifications of existing core Homebrew formulas 
 * ffmpeg-encore - FFmpeg tailored for encore, with x264, x265, [ffmpg-filter-proxy support](https://github.com/svt/ffmpeg-filter-proxy)
 * libsrf-proxy-filter -  [Subtitle Rendering Format filter](https://github.com/svt/ffmpeg-filter-proxy-filters)
 * libsvg-proxy-filter - [SVG filter](https://github.com/svt/ffmpeg-filter-proxy-filters)
-* x264-encore - [x264 encoder lib](https://code.videolan.org/videolan/x264.git)
-* x265-encore - [x265 encoder lib](https://bitbucket.org/multicoreware/x265_git)
 
 
 ## Dependencies
@@ -118,7 +116,7 @@ See [CONTRIBUTING](CONTRIBUTING.adoc)
 
 - The Formulas in this project is all released under the [BSD 2-clause "Simplified" License](LICENSE)
 
-- The Formulas FFmpeg-encore, x264-encore, x264-encore is built on Brew formulas, formulas themselves released under the same BSD-2 License, but also Copyright 2009-present, Homebrew contributors besides SVT.
+- The Formula FFmpeg-encore is built on Brew formulas, formulas themselves released under the same BSD-2 License, but also Copyright 2009-present, Homebrew contributors besides SVT.
 
 ### NOTE ABOUT THE FFMPEG FORMULA BUILD BINARY RESULTS
 
