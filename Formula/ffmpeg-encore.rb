@@ -6,17 +6,10 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-7.0.tar.xz"
-  sha256 "4426a94dd2c814945456600c8adfc402bee65ec14a70e8c531ec9a2cd651da7b"
+  url "https://ffmpeg.org/releases/ffmpeg-7.0.2.tar.xz"
+  sha256 "8646515b638a3ad303e23af6a3587734447cb8fc0a0c064ecdb8e95c4fd8b389"
   license "GPL-3.0-or-later"
-  revision 1
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
-
-  bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-7.0_1"
-    sha256 arm64_sonoma: "fd1f482a1241fe4a47c9a23cf96bd110e530fe664e45ad29d0546b1ff1f3de6d"
-    sha256 x86_64_linux: "676210fa0e952b03afcf9d1683cf9df7eb8af5c14af62f0ba0ed98cc929b0941"
-  end
 
   option "with-ffplay", "Enable ffplay"
 
