@@ -48,8 +48,8 @@ class FfmpegEncore < Formula
   fails_with gcc: "5"
 
   resource "proxy_filter" do
-    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/tags/v1.1.tar.gz"
-    sha256 "13ec3e891aad01b36b8cbb61e7a604a86157265a2b0bc6fb111605a4b686071a"
+    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg-7.1.tar.gz"
+    sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   end
 
   if build.with? "ffplay"
