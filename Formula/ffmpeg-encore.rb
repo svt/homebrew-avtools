@@ -22,7 +22,7 @@ class FfmpegEncore < Formula
 
   option "with-ffplay", "Enable ffplay"
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "dav1d"
   depends_on "fontconfig"
@@ -53,8 +53,6 @@ class FfmpegEncore < Formula
   end
 
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
-
-  fails_with gcc: "5"
 
   resource "proxy_filter" do
     url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg-7.1.tar.gz"
@@ -142,6 +140,6 @@ class FfmpegEncore < Formula
     # Create an example mp4 file
     mp4out = testpath/"video.mp4"
     system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_predicate mp4out, :exist?
+    assert_path_exists mp4out
   end
 end
