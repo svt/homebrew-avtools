@@ -10,7 +10,7 @@ jobs:
       HOMEBREW_NO_INSTALL_FROM_API: 1
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Homebrew
@@ -19,7 +19,7 @@ jobs:
 
       - name: Cache Homebrew Bundler RubyGems
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
