@@ -55,8 +55,8 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg-7.1.tar.gz"
-    sha256 "7ac9cfcd221ff21a27ddcb182f0181fb652737708eb4d4725d45b4567b12cab6"
+    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/tags/v1.2.tar.gz"
+    sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   end
 
   if build.with? "ffplay"
