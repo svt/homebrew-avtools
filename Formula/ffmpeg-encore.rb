@@ -20,6 +20,12 @@ class FfmpegEncore < Formula
     end
   end
 
+  bottle do
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-7.1.1"
+    sha256 arm64_sonoma: "ed0f95f1698cee6d4394254c746ba0786f348d6cc17fc2d3f3b42797485b6b22"
+    sha256 x86_64_linux: "d47081ef04b32271fe67e57247c0f34fdf6046e6b48981327743af3f9e103aa3"
+  end
+
   option "with-ffplay", "Enable ffplay"
 
   depends_on "pkgconf" => :build
