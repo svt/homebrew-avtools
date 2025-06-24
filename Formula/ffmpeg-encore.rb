@@ -8,6 +8,7 @@ class FfmpegEncore < Formula
   homepage "https://ffmpeg.org/"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
+  revision 1
 
   stable do
     url "https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz"
