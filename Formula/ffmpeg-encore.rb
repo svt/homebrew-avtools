@@ -7,26 +7,9 @@ class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
   license "GPL-3.0-or-later"
-  revision 1
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
-
-  stable do
-    url "https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz"
-    sha256 "733984395e0dbbe5c046abda2dc49a5544e7e0e1e2366bba849222ae9e3a03b1"
-
-    # Backport support for recent svt-av1 (3.0.0)
-    patch do
-      url "https://github.com/FFmpeg/FFmpeg/commit/d1ed5c06e3edc5f2b5f3664c80121fa55b0baa95.patch?full_index=1"
-      sha256 "0eb23ab90c0e5904590731dd3b81c86a4127785bc2b367267d77723990fb94a2"
-    end
-  end
-
-  bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-7.1.1_1"
-    sha256 arm64_sonoma: "e7cb8796bb2708666cc2deadaf3f92b5b0c59335f5941ba54b8bcea3dad432ab"
-    sha256 x86_64_linux: "413ab02626c5b1ed74397d6dcc9335d7ddb9bf5a664af2ad57b49cbdea3201f1"
-  end
-
+  url "https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz"
+  sha256 "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
   option "with-ffplay", "Enable ffplay"
 
   depends_on "pkgconf" => :build
@@ -62,8 +45,8 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/tags/v1.2.tar.gz"
-    sha256 "9798759f589daaa0de3fc8a5d10002a384481a9daa2dc1f8a3dc323df4bdc578"
+    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg8.tar.gz"
+    sha256 "be0f00890a218ae5a289c3cc5024096614ff4cb3b02a6975244b9b00f561de79"
   end
 
   if build.with? "ffplay"
@@ -128,8 +111,8 @@ class FfmpegEncore < Formula
     end
     cp_r Dir.glob("#{@proxyfilterpath}/*.c"), "libavfilter", verbose: true
     inreplace "libavfilter/allfilters.c",
-              "extern const AVFilter ff_vf_yadif;",
-              "extern const AVFilter ff_vf_yadif;\nextern const AVFilter ff_vf_proxy;\n"
+              "extern const FFFilter ff_vf_yadif;",
+              "extern const FFFilter ff_vf_yadif;\nextern const FFFilter ff_vf_proxy;\n"
     inreplace "libavfilter/Makefile",
               "# video filters",
               "# video filters\nOBJS-$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
