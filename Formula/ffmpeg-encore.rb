@@ -46,7 +46,7 @@ class FfmpegEncore < Formula
 
   resource "proxy_filter" do
     url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg8.tar.gz"
-    sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    sha256 "8eabd82bc207447bc562a5891a00d37289e2bceaac6bd3e06dbbac64e970c0c5"
   end
 
   if build.with? "ffplay"
