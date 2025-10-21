@@ -45,8 +45,8 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/ffmpeg8.tar.gz"
-    sha256 "8eabd82bc207447bc562a5891a00d37289e2bceaac6bd3e06dbbac64e970c0c5"
+    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/tags/v1.3.tar.gz"
+    sha256 "c286192fa9e04ad17f10757d1c04291c3ea531316640736a3904fd8b86f6cbb8"
   end
 
   if build.with? "ffplay"
@@ -58,7 +58,7 @@ class FfmpegEncore < Formula
 
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
-    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
+    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
     args = %W[
       --prefix=#{prefix}
       --enable-shared
