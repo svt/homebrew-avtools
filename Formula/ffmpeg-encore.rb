@@ -31,6 +31,8 @@ class FfmpegEncore < Formula
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
+  depends_on "libx11"
+  depends_on "libxcb"
   depends_on "openjpeg"
   depends_on "openssl@3"
   depends_on "svt-av1"
