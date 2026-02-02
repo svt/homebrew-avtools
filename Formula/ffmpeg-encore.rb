@@ -45,6 +45,10 @@ class FfmpegEncore < Formula
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
+  on_linux do
+    depends_on "xz"
+  end
+
   on_intel do
     depends_on "nasm" => :build
   end
@@ -58,7 +62,7 @@ class FfmpegEncore < Formula
 
   if build.with? "ffplay"
     on_linux do
-      depends_on "libxv"
+      depends_on "libxcb"
     end
     depends_on "sdl2"
   end
