@@ -20,6 +20,7 @@ class FfmpegEncore < Formula
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "dav1d"
+  depends_on "fdk-aac"
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "harfbuzz"
@@ -40,7 +41,6 @@ class FfmpegEncore < Formula
   depends_on "x265"
   depends_on "xz"
   depends_on "zimg"
-  depends_on "fdk-aac"
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
