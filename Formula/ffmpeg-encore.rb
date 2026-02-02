@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz"
-  sha256 "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
+  url "https://ffmpeg.org/releases/ffmpeg-8.0.1.tar.xz"
+  sha256 "05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
@@ -26,6 +26,7 @@ class FfmpegEncore < Formula
   depends_on "harfbuzz"
   depends_on "lame"
   depends_on "libass"
+  depends_on "libplacebo"
   depends_on "libsoxr"
   depends_on "libssh"
   depends_on "libvmaf"
@@ -62,6 +63,12 @@ class FfmpegEncore < Formula
     depends_on "sdl2"
   end
 
+  # Add svt-av1 4.x support
+  patch do
+    url "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/a5d4c398b411a00ac09d8fe3b66117222323844c"
+    sha256 "1dbbc1a4cf9834b3902236abc27fefe982da03a14bcaa89fb90c7c8bd10a1664"
+  end
+
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
@@ -87,6 +94,7 @@ class FfmpegEncore < Formula
       --enable-libfontconfig
       --enable-libfreetype
       --enable-libharfbuzz
+      --enable-libplacebo
       --disable-libjack
       --disable-indev=jack
       --enable-openssl
