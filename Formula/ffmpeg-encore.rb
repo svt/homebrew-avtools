@@ -16,7 +16,6 @@ class FfmpegEncore < Formula
     sha256 arm64_sequoia: "dc2ef88b330dbbb0e98369d348365fc2297fa86abd28f431a4a8a4edc89681e4"
     sha256 x86_64_linux:  "035a6394c6242711f7c05d6d3891dd9418d7f6aa25d3334c7b2c0826f86a051f"
   end
-  option "with-ffplay", "Enable ffplay"
 
   depends_on "pkgconf" => :build
   depends_on "aom"
@@ -45,10 +44,6 @@ class FfmpegEncore < Formula
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
-  on_linux do
-    depends_on "xz"
-  end
-
   on_intel do
     depends_on "nasm" => :build
   end
@@ -58,13 +53,6 @@ class FfmpegEncore < Formula
   resource "proxy_filter" do
     url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/tags/v1.3.tar.gz"
     sha256 "c286192fa9e04ad17f10757d1c04291c3ea531316640736a3904fd8b86f6cbb8"
-  end
-
-  if build.with? "ffplay"
-    on_linux do
-      depends_on "libxcb"
-    end
-    depends_on "sdl2"
   end
 
   # Add svt-av1 4.x support
@@ -111,7 +99,6 @@ class FfmpegEncore < Formula
     ]
 
     args << "--enable-libfdk-aac" if build.with? "fdk-aac"
-    args << "--enable-ffplay" if build.with? "ffplay"
     args += %w[--enable-videotoolbox --enable-audiotoolbox] if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
 
