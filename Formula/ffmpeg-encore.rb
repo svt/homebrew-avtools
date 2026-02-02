@@ -40,7 +40,7 @@ class FfmpegEncore < Formula
   depends_on "x265"
   depends_on "xz"
   depends_on "zimg"
-  depends_on "fdk-aac" => :recommended
+  depends_on "fdk-aac"
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
@@ -85,6 +85,7 @@ class FfmpegEncore < Formula
       --enable-libxml2
       --enable-lzma
       --enable-libass
+      --enable-libfdk-aac
       --enable-libfontconfig
       --enable-libfreetype
       --enable-libharfbuzz
@@ -100,7 +101,6 @@ class FfmpegEncore < Formula
       --enable-libsvtav1
     ]
 
-    args << "--enable-libfdk-aac" if build.with? "fdk-aac"
     args += %w[--enable-videotoolbox --enable-audiotoolbox] if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
 
