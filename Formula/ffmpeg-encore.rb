@@ -12,9 +12,9 @@ class FfmpegEncore < Formula
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-8.0"
-    sha256 arm64_sequoia: "dc2ef88b330dbbb0e98369d348365fc2297fa86abd28f431a4a8a4edc89681e4"
-    sha256 x86_64_linux:  "035a6394c6242711f7c05d6d3891dd9418d7f6aa25d3334c7b2c0826f86a051f"
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/ffmpeg-encore-8.0.1"
+    sha256 arm64_sequoia: "658a1218b9f8dd7996b3442803d3160dccacad4fe0f376d4c554ec7658763b63"
+    sha256 x86_64_linux:  "8d3815ec534d2a48c219ee400ab4fd804a8454a3582d480842b986121b65ff95"
   end
 
   depends_on "pkgconf" => :build
