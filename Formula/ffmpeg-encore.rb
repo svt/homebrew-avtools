@@ -9,7 +9,7 @@ class FfmpegEncore < Formula
   url "https://ffmpeg.org/releases/ffmpeg-8.0.1.tar.xz"
   sha256 "05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41"
   license "GPL-3.0-or-later"
-  revision 2
+  revision 3
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   bottle do
