@@ -56,8 +56,8 @@ class FfmpegEncore < Formula
   conflicts_with "ffmpeg", because: "it also ships with ffmpeg binary"
 
   resource "proxy_filter" do
-    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/tags/v1.3.tar.gz"
-    sha256 "c286192fa9e04ad17f10757d1c04291c3ea531316640736a3904fd8b86f6cbb8"
+    url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/10-bit.tar.gz"
+    sha256 "1cbd38dae5107b1e3f2c3481e4a5c2e25bef0f149588e6157f1cdebb62253371"
   end
 
   def install
