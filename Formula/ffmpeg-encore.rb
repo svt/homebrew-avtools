@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-8.1.tar.xz"
-  sha256 "b072aed6871998cce9b36e7774033105ca29e33632be5b6347f3206898e0756a"
+  url "https://ffmpeg.org/releases/ffmpeg-8.1.1.tar.xz"
+  sha256 "b6863adde98898f42602017462871b5f6333e65aec803fdd7a6308639c52edf3"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
@@ -57,7 +57,7 @@ class FfmpegEncore < Formula
 
   resource "proxy_filter" do
     url "https://github.com/svt/ffmpeg-filter-proxy/archive/refs/heads/10-bit.tar.gz"
-    sha256 "1cbd38dae5107b1e3f2c3481e4a5c2e25bef0f149588e6157f1cdebb62253371"
+    sha256 "82a6d46fe5b80d7a7b88901de4453ec34f6f25db9d5587712bf8591e99cfa377"
   end
 
   def install
