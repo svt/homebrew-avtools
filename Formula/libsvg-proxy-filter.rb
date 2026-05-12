@@ -21,6 +21,9 @@ class LibsvgProxyFilter < Formula
   depends_on "cairo"
 
   def install
+    # Pin a portable x86_64 baseline so source builds (e.g. on AMD hosts)
+    # don't bake in SSE4a / AVX-only instructions and SIGILL on Intel runtimes.
+    ENV["RUSTFLAGS"] = "-C target-cpu=x86-64" if Hardware::CPU.intel?
     system "cargo", "build", "--lib", "--release", "--locked",
            "--jobs", ENV.make_jobs.to_s,
            "--manifest-path", "svg_filter/Cargo.toml"
