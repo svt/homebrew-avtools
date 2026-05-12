@@ -8,7 +8,7 @@ class LibsvgProxyFilter < Formula
   url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/tags/v1.0.1.tar.gz"
   sha256 "3b9f1ba0f9e21b6c2edd523fd954f24cdd241b71fb0d0f7ba1688a12ef55db26"
   license "Apache-2.0"
-  head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
+  head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "caching"
 
   bottle do
     root_url "https://github.com/svt/homebrew-avtools/releases/download/libsvg-proxy-filter-1.0.1"
@@ -21,15 +21,13 @@ class LibsvgProxyFilter < Formula
   depends_on "cairo"
 
   def install
-    system "cargo", "build", "--lib", "--release", "--manifest-path", "svg_filter/Cargo.toml"
-    if OS.mac?
-      lib.install "svg_filter/target/release/libsvg_filter.dylib"
-    else
-      lib.install "svg_filter/target/release/libsvg_filter.so"
-    end
+    system "cargo", "build", "--lib", "--release", "--locked",
+           "--jobs", ENV.make_jobs.to_s,
+           "--manifest-path", "svg_filter/Cargo.toml"
+    lib.install "svg_filter/target/release/#{shared_library("libsvg_filter")}"
   end
 
   test do
-    print "TODO: tests\n"
+    assert_path_exists lib/shared_library("libsvg_filter")
   end
 end
