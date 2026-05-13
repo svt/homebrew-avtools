@@ -23,11 +23,16 @@ class LibsvgProxyFilter < Formula
   def install
     # Pin a portable x86_64 baseline so source builds (e.g. on AMD hosts)
     # don't bake in SSE4a / AVX-only instructions and SIGILL on Intel runtimes.
-    ENV["RUSTFLAGS"] = "-C target-cpu=x86-64" if Hardware::CPU.intel?
+    # Passing --target activates the matching [target.'cfg(...)'] block in the
+    # filter repo's .cargo/config.toml (and isolates the artifact dir).
+    triple = Utils.safe_popen_read("rustc", "-vV")[/^host: (.+)$/, 1]
+    ENV["RUSTFLAGS"] = "-C target-cpu=x86-64" if triple.start_with?("x86_64")
+
     system "cargo", "build", "--lib", "--release", "--locked",
+           "--target", triple,
            "--jobs", ENV.make_jobs.to_s,
            "--manifest-path", "svg_filter/Cargo.toml"
-    lib.install "svg_filter/target/release/#{shared_library("libsvg_filter")}"
+    lib.install "svg_filter/target/#{triple}/release/#{shared_library("libsvg_filter")}"
   end
 
   test do
