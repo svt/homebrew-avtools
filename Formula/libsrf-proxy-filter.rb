@@ -5,10 +5,11 @@
 class LibsrfProxyFilter < Formula
   desc "FFmpeg proxy filter for subtitle rendering"
   homepage "https://github.com/SVT/ffmpeg-filter-proxy-filters"
-  url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/tags/v1.0.1.tar.gz"
-  sha256 "3b9f1ba0f9e21b6c2edd523fd954f24cdd241b71fb0d0f7ba1688a12ef55db26"
+  url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/heads/caching.tar.gz"
+  sha256 "f8b85eda324279052ccd078f9e6cd77d303a121b1673785b383c239d3807b7bd"
+  version "1.0.2-pre1"
   license "Apache-2.0"
-  head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "caching"
+  head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
   bottle do
     root_url "https://github.com/svt/homebrew-avtools/releases/download/libsrf-proxy-filter-1.0.1"
