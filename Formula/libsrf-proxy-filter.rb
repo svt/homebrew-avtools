@@ -7,7 +7,7 @@ class LibsrfProxyFilter < Formula
   homepage "https://github.com/SVT/ffmpeg-filter-proxy-filters"
   url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/heads/caching.tar.gz"
   version "1.0.2-pre1"
-  sha256 "f8b85eda324279052ccd078f9e6cd77d303a121b1673785b383c239d3807b7bd"
+  sha256 "ebdb08f9fb390db84c56382d347293ca959d9ef289db705d2a5eb926cf9e0172"
   license "Apache-2.0"
   head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
@@ -22,18 +22,10 @@ class LibsrfProxyFilter < Formula
   depends_on "cairo"
 
   def install
-    # Pin a portable x86_64 baseline so source builds (e.g. on AMD hosts)
-    # don't bake in SSE4a / AVX-only instructions and SIGILL on Intel runtimes.
-    # Passing --target activates the matching [target.'cfg(...)'] block in the
-    # filter repo's .cargo/config.toml (and isolates the artifact dir).
-    triple = Utils.safe_popen_read("rustc", "-vV")[/^host: (.+)$/, 1]
-    ENV["RUSTFLAGS"] = "-C target-cpu=x86-64" if triple.start_with?("x86_64")
-
     system "cargo", "build", "--lib", "--release", "--locked",
-           "--target", triple,
            "--jobs", ENV.make_jobs.to_s,
            "--manifest-path", "srf_filter/Cargo.toml"
-    lib.install "srf_filter/target/#{triple}/release/#{shared_library("libsrf_filter")}"
+    lib.install "srf_filter/target/release/#{shared_library("libsrf_filter")}"
   end
 
   test do

@@ -14,7 +14,7 @@ jobs:
     env:
       HOMEBREW_NO_INSTALL_FROM_API: 1
     if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
@@ -31,7 +31,7 @@ jobs:
         run: brew pr-pull --debug --tap="$GITHUB_REPOSITORY" "$PULL_REQUEST"
 
       - name: Push commits
-        uses: Homebrew/actions/git-try-push@master
+        uses: Homebrew/actions/git-try-push@main
         with:
           token: ${{ github.token }}
           branch: main
