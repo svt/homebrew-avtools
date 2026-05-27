@@ -5,9 +5,8 @@
 class LibsvgProxyFilter < Formula
   desc "FFmpeg proxy filter for svg rendering"
   homepage "https://github.com/SVT/ffmpeg-filter-proxy-filters"
-  url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/heads/caching.tar.gz"
-  version "1.0.2-pre1"
-  sha256 "ebdb08f9fb390db84c56382d347293ca959d9ef289db705d2a5eb926cf9e0172"
+  url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/tags/v1.1.tar.gz"
+  sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   license "Apache-2.0"
   head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
