@@ -6,7 +6,7 @@ class LibsrfProxyFilter < Formula
   desc "FFmpeg proxy filter for subtitle rendering"
   homepage "https://github.com/SVT/ffmpeg-filter-proxy-filters"
   url "https://github.com/SVT/ffmpeg-filter-proxy-filters/archive/refs/tags/v1.1.tar.gz"
-  sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  sha256 "601d0e89e225e8147b365060f6f5bcbebb9d0b8b40967507829488200d27098c"
   license "Apache-2.0"
   head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
