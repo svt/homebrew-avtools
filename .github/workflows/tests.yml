@@ -10,7 +10,7 @@ jobs:
       HOMEBREW_NO_INSTALL_FROM_API: 1
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, ubuntu-24.04-arm]
+        os: [ubuntu-24.04, macos-latest, ubuntu-24.04-arm]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Bubblewrap and enable rootless user namespaces (Linux)
@@ -55,7 +55,7 @@ jobs:
           path: '*.bottle.*'
 
   merge:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: test-bot
     steps:
       - name: Merge Artifacts
