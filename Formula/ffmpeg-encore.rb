@@ -60,6 +60,13 @@ class FfmpegEncore < Formula
     sha256 "fba9588e412efa3080ffcd6b3af07b50a99cecbc7356607b346cb0e28492c896"
   end
 
+  # Pinned to a specific commit until ffmpeg-filter-dnenhance cuts its first
+  # tagged release; swap to refs/tags/vX.Y.Z then.
+  resource "dnenhance_filter" do
+    url "https://github.com/svt/ffmpeg-filter-dnenhance/archive/aab8b87641ca9df87332ace2372a71805c71dc12.tar.gz"
+    sha256 "a752d3624f2cc8828fd24cf32c6d4f0e8684e9802533152f1faec89b4e8475fc"
+  end
+
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
@@ -120,6 +127,20 @@ class FfmpegEncore < Formula
     inreplace "libavfilter/Makefile",
               "# video filters",
               "# video filters\nOBJS-$(CONFIG_PROXY_FILTER) += vf_proxy.o\n"
+
+    # af_dnenhance: neural dialogue enhancement via DeepFilterNet 3 (libdf
+    # is dlopen'd at runtime; no build-time dependency).
+    resource("dnenhance_filter").stage do |stage|
+      @dnenhancefilterpath = Dir.pwd
+      stage.staging.retain!
+    end
+    cp_r Dir.glob("#{@dnenhancefilterpath}/*.c"), "libavfilter", verbose: true
+    inreplace "libavfilter/allfilters.c",
+              "extern const FFFilter ff_af_dialoguenhance;",
+              "extern const FFFilter ff_af_dialoguenhance;\nextern const FFFilter ff_af_dnenhance;\n"
+    inreplace "libavfilter/Makefile",
+              "# audio filters",
+              "# audio filters\nOBJS-$(CONFIG_DNENHANCE_FILTER) += af_dnenhance.o\n"
 
     system "./configure", *args
     system "make", "install"
