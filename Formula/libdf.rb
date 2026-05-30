@@ -5,6 +5,14 @@
 class Libdf < Formula
   desc "DeepFilterNet inference library (libDF) with C ABI"
   homepage "https://github.com/Rikorose/DeepFilterNet"
+  # Upstream Rikorose/DeepFilterNet has had no commits since 2024-09-25 and
+  # looks de facto unmaintained. If the repo ever disappears or we hit a
+  # rustc/build issue we can't sidestep, active community forks include
+  # grazder/DeepFilterNet (the largest, with its own forks) and
+  # KaleyraVideo/DeepFilterNet (a corporate fork shipping in production).
+  # The C ABI we depend on is just six functions, so swapping the source
+  # in this formula is mostly a URL + sha256 change.
+  #
   # Pinned to a known-working main commit (between 0.5.6 and the unreleased
   # 0.5.7). v0.5.6 cannot be used because: (a) its libDF/Cargo.toml lacks the
   # `crate-type = ["cdylib", ...]` declaration, so cargo only produces an
