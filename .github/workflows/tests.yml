@@ -8,6 +8,12 @@ jobs:
   test-bot:
     env:
       HOMEBREW_NO_INSTALL_FROM_API: 1
+      # brew test-bot auto-trusts third-party taps (the "trust-test-bot-taps"
+      # PR in Homebrew/brew), but `brew doctor` still warns and test-bot fails
+      # the step. Opt out of HOMEBREW_REQUIRE_TAP_TRUST until that disagreement
+      # is resolved upstream; we can drop this once doctor stops flagging
+      # trusted taps.
+      HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
     strategy:
       matrix:
         os: [ubuntu-24.04, macos-latest, ubuntu-24.04-arm]
@@ -39,13 +45,6 @@ jobs:
         run: brew install-bundler-gems
 
       - run: brew test-bot --only-cleanup-before
-
-      # Homebrew's new tap-trust requirement causes `brew doctor` (run by
-      # --only-setup) to fail for third-party taps. Trust this tap explicitly
-      # rather than disabling the safety feature via HOMEBREW_NO_REQUIRE_TAP_TRUST.
-      # ${GITHUB_REPOSITORY/homebrew-/} strips Homebrew's conventional prefix:
-      # svt/homebrew-avtools → svt/avtools.
-      - run: brew trust --tap "${GITHUB_REPOSITORY/homebrew-/}"
 
       - run: brew test-bot --only-setup
 
