@@ -16,7 +16,14 @@ jobs:
       HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
     strategy:
       matrix:
-        os: [ubuntu-24.04, macos-latest, ubuntu-24.04-arm]
+        # ubuntu-24.04-arm temporarily removed — GitHub-hosted ARM Linux
+        # runners have been killing the job with SIGTERM at varying early
+        # steps (apt-get update, brew uninstall) with no actionable error.
+        # Pattern looks like hosted-runner instability rather than anything
+        # in this tap or in brew test-bot. Re-enable when ARM runners are
+        # more stable, or move to a self-hosted ARM runner if we need that
+        # bottle reliably.
+        os: [ubuntu-24.04, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Bubblewrap and enable rootless user namespaces (Linux)
