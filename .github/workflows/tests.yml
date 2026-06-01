@@ -40,6 +40,13 @@ jobs:
 
       - run: brew test-bot --only-cleanup-before
 
+      # Homebrew's new tap-trust requirement causes `brew doctor` (run by
+      # --only-setup) to fail for third-party taps. Trust this tap explicitly
+      # rather than disabling the safety feature via HOMEBREW_NO_REQUIRE_TAP_TRUST.
+      # ${GITHUB_REPOSITORY/homebrew-/} strips Homebrew's conventional prefix:
+      # svt/homebrew-avtools → svt/avtools.
+      - run: brew trust --tap "${GITHUB_REPOSITORY/homebrew-/}"
+
       - run: brew test-bot --only-setup
 
       - run: brew test-bot --only-tap-syntax
