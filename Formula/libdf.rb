@@ -45,7 +45,7 @@ class Libdf < Formula
     # never reads. We still must install the standalone DFN3 tarball to
     # pkgshare because that's what the C API actually opens. Living with
     # the dead weight is easier than carrying a Cargo.toml patch.
-    system "cargo", "build", "--release",
+    system "cargo", "build", "--lib", "--release",
            "--jobs", ENV.make_jobs.to_s,
            "-p", "deep_filter",
            "--features", "capi,tract,default-model"
