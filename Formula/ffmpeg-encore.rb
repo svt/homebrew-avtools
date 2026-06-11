@@ -60,11 +60,9 @@ class FfmpegEncore < Formula
     sha256 "fba9588e412efa3080ffcd6b3af07b50a99cecbc7356607b346cb0e28492c896"
   end
 
-  # Pinned to a specific commit until ffmpeg-filter-dnenhance cuts its first
-  # tagged release; swap to refs/tags/vX.Y.Z then.
   resource "dnenhance_filter" do
-    url "https://github.com/svt/ffmpeg-filter-dnenhance/archive/48aef5bc30ff338eac9cd2083dca079e9e8792ee.tar.gz"
-    sha256 "41ec59f358a6f94dcf0c7929ebc7f3ccf95d316e97e7fa72fa112a48407a7efd"
+    url "https://github.com/svt/ffmpeg-filter-dnenhance/archive/refs/tags/v1.0.tar.gz"
+    sha256 "e46c49367f35fa95e1c1603efb9bd8877e237e4f0a74e8132286d1c1354b95bb"
   end
 
   def install
