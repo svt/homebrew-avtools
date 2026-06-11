@@ -28,6 +28,13 @@ class Libdf < Formula
   license "MIT"
   head "https://github.com/Rikorose/DeepFilterNet.git", branch: "main"
 
+  bottle do
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/libdf-0.5.6+d375b2d"
+    sha256 cellar: :any, arm64_sequoia: "78a40df4427bc74f7fff5109a406b3f966a39ae4fc8bc14c428462d041604c70"
+    sha256 cellar: :any, arm64_linux:   "fc0a30ff15302f140bedc829870cfe967323ec620fa0488c7d2307131db1f257"
+    sha256 cellar: :any, x86_64_linux:  "d606e1d544afbde345e68ae84088a87f4e4da7e40a13964daac1ca97185cd7f8"
+  end
+
   depends_on "rust" => :build
 
   def install
