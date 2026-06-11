@@ -11,9 +11,10 @@ class LibsrfProxyFilter < Formula
   head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/libsrf-proxy-filter-1.0.1"
-    sha256 cellar: :any,                 big_sur:      "efeecdd2562cacffd138ad1f68b03f80212266e552c567b7ccba524f30e46e1e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "8afd2d435b9cd30615495f5b2f15960faba5af81f871ea6b6e2d8c9424402ed4"
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/libsrf-proxy-filter-1.1"
+    sha256 cellar: :any, arm64_sequoia: "4eb8e3affdb450e81416b5899757ae0c85af3aea6ea457bd40a7a96d390216fe"
+    sha256 cellar: :any, arm64_linux:   "c03d4be9f35440d075f6c373b2c393fb16d06160283f5e333aa78a19085ac7e9"
+    sha256 cellar: :any, x86_64_linux:  "8bffe243ef34d129da07e117005d773883b086b881e8ae233bef56788219cd91"
   end
 
   depends_on "pkg-config" => :build
