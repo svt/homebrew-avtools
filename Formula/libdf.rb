@@ -13,14 +13,17 @@ class Libdf < Formula
   # The C ABI we depend on is just six functions, so swapping the source
   # in this formula is mostly a URL + sha256 change.
   #
-  # Pinned to a known-working main commit (between 0.5.6 and the unreleased
-  # 0.5.7). v0.5.6 cannot be used because: (a) its libDF/Cargo.toml lacks the
-  # `crate-type = ["cdylib", ...]` declaration, so cargo only produces an
-  # .rlib; (b) its Cargo.lock pins an outdated `time` crate that no longer
-  # compiles on current rustc. Both issues are fixed on main. Bump this when
-  # 0.5.7 is tagged.
+  # Pinned to a specific main commit (d375b2d) as the deliberate stable
+  # base. The most recent tagged release, v0.5.6, cannot be used because:
+  # (a) its libDF/Cargo.toml lacks the `crate-type = ["cdylib", ...]`
+  # declaration, so cargo only produces an .rlib; (b) its Cargo.lock pins
+  # an outdated `time` crate that no longer compiles on current rustc.
+  # Both issues are fixed on main. Given the upstream silence noted above,
+  # treat the SHA pin as the long-term posture rather than a placeholder —
+  # bump it only when there's a concrete reason (new release, fork
+  # migration, or a needed fix).
   url "https://github.com/Rikorose/DeepFilterNet/archive/d375b2d8309e0935d165700c91da9de862a99c31.tar.gz"
-  version "0.5.7-pre.d375b2d"
+  version "0.5.6+d375b2d"
   sha256 "49471f3633a24c097d82f3b0d2dbd83a0c1bac3e2f6f6c9a675ef0020ebe5c51"
   license "MIT"
   head "https://github.com/Rikorose/DeepFilterNet.git", branch: "main"
