@@ -11,9 +11,10 @@ class LibsvgProxyFilter < Formula
   head "https://github.com/SVT/ffmpeg-filter-proxy-filters.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/svt/homebrew-avtools/releases/download/libsvg-proxy-filter-1.0.1"
-    sha256 cellar: :any,                 big_sur:      "994433c54c6b615cf5261a0deeed176fc37679df93a9af51c6312316f9af1beb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "d0c9e9f125efafe9e0c7fcf45e6cc6a4dedd8218535abadc2842a449726fe492"
+    root_url "https://github.com/svt/homebrew-avtools/releases/download/libsvg-proxy-filter-1.1"
+    sha256 cellar: :any, arm64_sequoia: "9fd0599174b6820e60658342b5b24809b09b72314278a935665c4e3c866928a3"
+    sha256 cellar: :any, arm64_linux:   "c8331f8a24d36b9ea495314282ae34ee736fbe47250c0a2095cb73fa8cf5ca14"
+    sha256 cellar: :any, x86_64_linux:  "d9708adae8d9c6a056c9c74994a29adb39f8259101e6bb4a412bdce39df9b499"
   end
 
   depends_on "pkg-config" => :build
