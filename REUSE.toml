@@ -1,0 +1,13 @@
+version = 1
+
+[[annotations]]
+path = [".gitignore", "**.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2021 Sveriges Television AB"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ".github/workflows/*.yml"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2021 Sveriges Television AB"
+SPDX-License-Identifier = "CC0-1.0"

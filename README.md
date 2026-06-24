@@ -2,144 +2,117 @@
 
 # Homebrew AVTools
 
-A brew tap for assorted audio and video tools in use at SVT, mainly for encoding purposes.
+A Homebrew tap for the audio and video tools used at SVT, primarily for encoding
+and proxy/subtitle rendering.
 
-Currently this tap holds minor modifications of existing core Homebrew formulas  - FFmpeg and codecs, but also formulas for a few of the [FFmpeg filters released by SVT](https://github.com/svt/ffmpeg-filter-proxy)
+The tap ships a build of FFmpeg tailored for [Encore](https://github.com/svt/encore)
+together with the [FFmpeg filters released by SVT](https://github.com/svt/ffmpeg-filter-proxy),
+plus the supporting libraries those filters need at runtime.
 
-* ffmpeg-encore - FFmpeg tailored for encore, with x264, x265, [ffmpg-filter-proxy support](https://github.com/svt/ffmpeg-filter-proxy)
-* libsrf-proxy-filter -  [Subtitle Rendering Format filter](https://github.com/svt/ffmpeg-filter-proxy-filters)
-* libsvg-proxy-filter - [SVG filter](https://github.com/svt/ffmpeg-filter-proxy-filters)
+## Formulas
 
+| Formula | Description |
+| --- | --- |
+| `ffmpeg-encore` | FFmpeg tailored for Encore, with x264, x265, SVT-AV1, fdk-aac, [ffmpeg-filter-proxy](https://github.com/svt/ffmpeg-filter-proxy) (`proxy` video filter) and the [`dnenhance`](https://github.com/svt/ffmpeg-filter-dnenhance) neural dialogue-enhancement audio filter built in. |
+| `libsrf-proxy-filter` | [Subtitle Rendering Format filter](https://github.com/svt/ffmpeg-filter-proxy-filters) for the `proxy` filter. |
+| `libsvg-proxy-filter` | [SVG filter](https://github.com/svt/ffmpeg-filter-proxy-filters) for the `proxy` filter. |
+| `libdf` | [DeepFilterNet](https://github.com/Rikorose/DeepFilterNet) inference library (libDF, C ABI), loaded at runtime by the `dnenhance` filter in `ffmpeg-encore`. |
 
-## Dependencies
+Pre-built bottles are published as GitHub releases for `arm64_sequoia` (Apple
+Silicon macOS), `arm64_linux`, and `x86_64_linux`, so installation usually
+needs no local compilation.
 
-- [Brew](https://brew.sh/)
+## Installation
 
-## Installation & Usage
-
-There are a few options. 
-
-You can use the pre-built Docker Image, build your own Docker Image from the Dockerfile, or add the Brew tap and build it on your machine.
-
-
-### Install Brew tap
-
-- Add the tap to your Brew tap configuration, and install the tools you wish
+Add the tap, then install the formulas you need:
 
 ```console
-$ brew tap svt/avtools 
+$ brew tap svt/avtools
+$ brew install ffmpeg-encore
 ```
 
-- Optional: For more info about the tap you could use (example uses [jq](https://stedolan.github.io/jq/)
+`ffmpeg-encore` conflicts with Homebrew core `ffmpeg` (both ship an `ffmpeg`
+binary), so only one can be linked at a time.
+
+For more info about the tap (example uses [jq](https://stedolan.github.io/jq/)):
 
 ```console
 $ brew tap-info svt/avtools --json | jq
 ```
 
-- Example install
+## Usage
+
+### The `proxy` filter (SRF / SVG)
+
+The `proxy` filter is compiled into `ffmpeg-encore` and loads a rendering
+backend at runtime. Install the backend you need — `libsrf-proxy-filter` for
+subtitles, `libsvg-proxy-filter` for SVG — and point the filter at the shared
+library. See the
+[ffmpeg-filter-proxy](https://github.com/svt/ffmpeg-filter-proxy) docs for the
+full argument syntax.
 
 ```console
-$ brew install ffmpeg-encore
+$ brew install libsrf-proxy-filter libsvg-proxy-filter
 ```
 
-### With Docker
+### Neural dialogue enhancement (`dnenhance`)
 
-#### Test the pre-built Docker Image
-
-_**This image is only intended for development and certainly not for production usage. It contains the taps version of the avtools formulas, and a few other apps like mediainfo.
-Notably, compared to the Formula/ffmpeg-encore does *excludes* the GPL-incompatible library fdk-aac** (but use aac instedI)_
-
-[avtools-osadl-debian](https://github.com/svt?tab=packages&repo_name=homebrew-avtools), 
-
-
-#### Building your own Dockerimage
-
-
-You can also build you own Docker Image using the included Dockerfile. 
-
-Use of [Docker buildx](https://docs.docker.com/buildx/working-with-buildx/) is assumed
-
-_Example, located in the project root, using buildx, building the distribution image for the linux/amd64 platform, without the fdk-aac library_
+The `dnenhance` audio filter (from
+[ffmpeg-filter-dnenhance](https://github.com/svt/ffmpeg-filter-dnenhance)) is
+compiled into `ffmpeg-encore` and uses DeepFilterNet 3 via `libdf` at runtime.
+Install `libdf` and run:
 
 ```console
-$ docker build --target=distribution --platform linux/amd64 --build-arg=FFMPEG_BREW_OPTIONS=--without-fdk-aac . -f docker/Dockerfile.osadl.debian
+$ brew install libdf
+$ ffmpeg -i in.wav -af dnenhance out.wav
 ```
 
-Available build targets are:
-
-* buildimage
-* distribution
-* source
-
-Default: If you dont give a --target you will build the distribution image as default - but also all other targets, so set the target, you want to avoid the source target if you don't need it.
-
-Brew Options through the Docker build:
-
-* To build the FFmepg forumla without fdk-aac you could pass the --build-arg FFMPEG_BREW_OPTIONS=--without-fdk-aac
-
-
-**NOTE: If you build your own Docker Image for anything else than internal use, you have to consider how the third party dependencies interact, if you want to avoid building an un-distributable image.
-A notable example is that you can't include the fdk-aac library together with x264,x265 in the same build, as the fdk-aac license is currently GPL-incompatible.**
-
-## Configuration
-
-Currently, the configurations options are few - this might change in the future.
-
-## Known issues
-
-* The Docker Images could be smaller if it used Alpine, and was optimized regarding dependencies
-
-* The build uses some libraries installed through apt, so we are *not* in the Brew eco system totally - in other words, all dependecies used for the avvideo tools are not found in Brew repos, most notably glibc. Run ffmpeg with ldd to see a list.
- 
-* Auditing the Formulas still gives a few warnings, *feel free to fix them.*
-To audit them all, from the project's root folder you can run
+The filter auto-discovers `libdf` and the bundled DeepFilterNet 3 model from the
+Homebrew prefix — no `DYLD_LIBRARY_PATH` or `model=` argument is required. To use
+a different DFN3 variant, pass it explicitly:
 
 ```console
-$ for f in Formula/*.rb; do echo "Processing $f file.."; eval "brew audit --new --formula $f"; done
+$ ffmpeg -i in.wav -af "dnenhance=model=/path/to/model.tar.gz" out.wav
 ```
-
-* The Formulas is not yet keg_only, which could allow to have multiple instances/versions
 
 ## Getting help
 
-If you have questions, concerns, bug reports, etc, please file an issue in [this repository's Issue Tracker](https://github.com/svt/homebrew-avtools)
+For questions, bug reports, etc., please file an issue in
+[this repository's issue tracker](https://github.com/svt/homebrew-avtools/issues).
 
 ## Getting involved
 
-See [CONTRIBUTING](CONTRIBUTING.adoc)
+See [CONTRIBUTING](CONTRIBUTING.md).
 
-----
+---
 
 ## License
 
-### FORMULAS
+The formulas in this project are released under the
+[BSD 2-Clause "Simplified" License](LICENSE). `ffmpeg-encore` is built on
+Homebrew formulas, which are themselves released under the same BSD-2 license but
+are also Copyright 2009-present, Homebrew contributors besides SVT.
 
-- The Formulas in this project is all released under the [BSD 2-clause "Simplified" License](LICENSE)
+### Note about FFmpeg build results
 
-- The Formula FFmpeg-encore is built on Brew formulas, formulas themselves released under the same BSD-2 License, but also Copyright 2009-present, Homebrew contributors besides SVT.
+The binaries the formulas *build* are released under various licenses depending
+on the source they pull in. The default `ffmpeg-encore` build enables
+`--enable-gpl` and `--enable-nonfree` (it links fdk-aac), which produces a
+**non-redistributable** binary. Consult the upstream project homepages before
+distributing any built binaries.
 
-### NOTE ABOUT THE FFMPEG FORMULA BUILD BINARY RESULTS
+_We aim to follow best practices for license compliance. If you find something
+we missed, or plain errors, please let us know so we can fix it as soon as
+possible._
 
-The binaries the Formulas will *build* is released under various other licenses, depending on your build options. 
-See the different projects homepages and the license metadata in the docker/misc/LICENSE_THIRD_PARTIES.txt for some guidance to make an informed decision if you intend to distribute any built binaries further. 
+---
 
-### PRE-BUILT DOCKER IMAGE LICENSE
-
-The Docker Image avtools-osadl-debian image is built on the [OSADL](https://www.osadl.org/OSADL-Docker-Base-Image.osadl-docker-base-image.0.html ) Debian base image.
-
-The FFmpeg binary compiled in avtools-osadl-debian is released as under GPLv3 due to being the least common distrubutable license combination. 
-
-A corresponding image [avtools-osadl-debian-source-image](https://github.com/svt?tab=packages&repo_name=homebrew-avtools) contains corresponding source and license information for the libraries used.
-
-_We aim to follow best practices for license compliance, however, if you find something we missed or even plain errors, please let us know so that we can improve this as soon as possible._
-
-----
-
-## Primary Maintainer
+## Primary maintainer
 
 [The Videocore team at SVT](https://github.com/orgs/svt/teams/videocore)
 
 ## Credits and references
 
-To many to mention, the list would be endless here, but a sincerly thanks to projects big or small making this repo possible.
-
+Too many to mention — but a sincere thanks to the projects big and small that
+make this repo possible.
+</content>
