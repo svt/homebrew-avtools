@@ -150,14 +150,14 @@ class FfmpegEncore < Formula
   end
 
   def caveats
-    <<~EOS
-      This build omits the Fraunhofer FDK AAC encoder, so it is plain GPLv3
-      and redistributable (this is what the pre-built bottle ships).
+    # Only warn when fdk-aac was actually compiled in. The default build (and
+    # the bottle) is plain GPLv3, so it needs no caveat.
+    return if build.without?("fdk-aac")
 
-      To build with fdk-aac, compile from source:
-        brew install --with-fdk-aac svt/avtools/ffmpeg-encore
-      That build enables --enable-nonfree and is NOT redistributable; keep
-      any artifacts containing it internal.
+    <<~EOS
+      This build includes the Fraunhofer FDK AAC encoder, so it enables
+      --enable-nonfree and is NOT redistributable. Keep any artifacts
+      containing it internal; do not publish bottles or images built this way.
     EOS
   end
 
