@@ -18,9 +18,9 @@ plus the supporting libraries those filters need at runtime.
 | `libsvg-proxy-filter` | [SVG filter](https://github.com/svt/ffmpeg-filter-proxy-filters) for the `proxy` filter. |
 | `libdf` | [DeepFilterNet](https://github.com/Rikorose/DeepFilterNet) inference library (libDF, C ABI), loaded at runtime by the `dnenhance` filter in `ffmpeg-encore`. |
 
-Pre-built bottles are published as GitHub releases for `arm64_sequoia` (Apple
-Silicon macOS), `arm64_linux`, and `x86_64_linux`, so installation usually
-needs no local compilation.
+Pre-built bottles are published as GitHub releases for Apple Silicon macOS and
+for Linux (`arm64` and `x86_64`), so installation usually needs no local
+compilation.
 
 ## Installation
 
