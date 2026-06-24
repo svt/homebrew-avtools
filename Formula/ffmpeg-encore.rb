@@ -6,8 +6,8 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-8.1.1.tar.xz"
-  sha256 "b6863adde98898f42602017462871b5f6333e65aec803fdd7a6308639c52edf3"
+  url "https://ffmpeg.org/releases/ffmpeg-8.1.2.tar.xz"
+  sha256 "464beb5e7bf0c311e68b45ae2f04e9cc2af88851abb4082231742a74d97b524c"
   license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
@@ -21,7 +21,6 @@ class FfmpegEncore < Formula
   depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "dav1d"
-  depends_on "fdk-aac"
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "harfbuzz"
@@ -42,6 +41,9 @@ class FfmpegEncore < Formula
   depends_on "x265"
   depends_on "xz"
   depends_on "zimg"
+  # GPL-incompatible: forces --enable-nonfree (unredistributable), so keep it
+  # opt-in and out of the default bottle.
+  depends_on "fdk-aac" => :optional
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
@@ -88,7 +90,6 @@ class FfmpegEncore < Formula
       --enable-libxml2
       --enable-lzma
       --enable-libass
-      --enable-libfdk-aac
       --enable-libfontconfig
       --enable-libfreetype
       --enable-libharfbuzz
@@ -100,20 +101,18 @@ class FfmpegEncore < Formula
       --enable-libssh
       --enable-libvmaf
       --enable-libzimg
-      --enable-nonfree
       --enable-libsvtav1
     ]
 
     args += %w[--enable-videotoolbox --enable-audiotoolbox] if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
 
-    # GPL-incompatible libraries, requires ffmpeg to build with "--enable-nonfree" flag, (unredistributable libraries)
-    # Openssl IS GPL compatible since 3, but due to this patch
-    # https://patchwork.ffmpeg.org/project/ffmpeg/patch/20200609001340.52369-1-rcombs@rcombs.me/
-    # not being in this version we build from, we have to enable non-free anyway.
-    # When FFmpeg base is upgraded (including that patch), we should only enable-nonfree when
-    # fdk-aac is enabled (the default option)
-    # args << "--enable-nonfree" if !build.without?("fdk-aac")
+    # Only enable fdk-aac on request: it's the sole nonfree library here and
+    # makes the build unredistributable. The default stays clean GPLv3.
+    if build.with?("fdk-aac")
+      args << "--enable-libfdk-aac"
+      args << "--enable-nonfree"
+    end
 
     resource("proxy_filter").stage do |stage|
       @proxyfilterpath = Dir.pwd
@@ -148,6 +147,18 @@ class FfmpegEncore < Formula
     system "make", "alltools"
     bin.install (buildpath/"tools").children.select { |f| f.file? && f.executable? }
     pkgshare.install buildpath/"tools/python"
+  end
+
+  def caveats
+    <<~EOS
+      This build omits the Fraunhofer FDK AAC encoder, so it is plain GPLv3
+      and redistributable (this is what the pre-built bottle ships).
+
+      To build with fdk-aac, compile from source:
+        brew install --with-fdk-aac svt/avtools/ffmpeg-encore
+      That build enables --enable-nonfree and is NOT redistributable; keep
+      any artifacts containing it internal.
+    EOS
   end
 
   test do

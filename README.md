@@ -95,11 +95,22 @@ are also Copyright 2009-present, Homebrew contributors besides SVT.
 
 ### Note about FFmpeg build results
 
-The binaries the formulas *build* are released under various licenses depending
-on the source they pull in. The default `ffmpeg-encore` build enables
-`--enable-gpl` and `--enable-nonfree` (it links fdk-aac), which produces a
-**non-redistributable** binary. Consult the upstream project homepages before
-distributing any built binaries.
+The default `ffmpeg-encore` build is **GPLv3** (it links GPL libraries such as
+x264 and x265 via `--enable-gpl`) and is redistributable — this is what the
+pre-built bottle ships.
+
+Building with `--with-fdk-aac` adds the Fraunhofer FDK AAC encoder, which is
+GPL-incompatible and forces `--enable-nonfree`. FFmpeg marks such builds as
+**unredistributable**, so that binary must not be distributed (keep any
+artifacts containing it internal). It is only ever produced by an explicit
+source build, never by the bottle:
+
+```console
+$ brew install --with-fdk-aac ffmpeg-encore
+```
+
+See [FFmpeg's LICENSE.md](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md)
+for the authoritative details.
 
 _We aim to follow best practices for license compliance. If you find something
 we missed, or plain errors, please let us know so we can fix it as soon as
