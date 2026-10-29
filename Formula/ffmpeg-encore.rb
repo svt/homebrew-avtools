@@ -35,7 +35,7 @@ class FfmpegEncore < Formula
   depends_on "libx11"
   depends_on "libxcb"
   depends_on "openjpeg"
-  depends_on "openssl@3"
+  depends_on "openssl@4"
   depends_on "svt-av1"
   depends_on "x264"
   depends_on "x265"
