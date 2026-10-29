@@ -1,0 +1,25 @@
+diff --git a/libavfilter/af_sidechaincompress.c b/libavfilter/af_sidechaincompress.c
+index 06555cb..0ae8487 100644
+--- a/libavfilter/af_sidechaincompress.c
++++ b/libavfilter/af_sidechaincompress.c
+@@ -286,8 +286,18 @@ static int activate(AVFilterContext *ctx)
+         if (ret < 0)
+             return ret;
+     }
+-    FF_FILTER_FORWARD_STATUS(ctx->inputs[0], ctx->outputs[0]);
+-    FF_FILTER_FORWARD_STATUS(ctx->inputs[1], ctx->outputs[0]);
++    // Forward an input's status only once this filter's own buffer for THAT
++    // input is drained. FF_FILTER_FORWARD_STATUS closes the output link at the
++    // input's status pts and consumers drop everything after that point, so
++    // forwarding with samples still in our fifo abandons them. This matters
++    // when the sidechain producer delivers in small hops that trail behind
++    // the main input (e.g. dnenhance draining its model lookahead at EOF):
++    // the main input reaches EOF first while our main fifo and the sidechain
++    // fifo still hold unemitted pairs, which must be output before closing.
++    if (!av_audio_fifo_size(s->fifo[0]))
++        FF_FILTER_FORWARD_STATUS(ctx->inputs[0], ctx->outputs[0]);
++    if (!av_audio_fifo_size(s->fifo[1]))
++        FF_FILTER_FORWARD_STATUS(ctx->inputs[1], ctx->outputs[0]);
+     if (ff_outlink_frame_wanted(ctx->outputs[0])) {
+         if (!av_audio_fifo_size(s->fifo[0]))
+             ff_inlink_request_frame(ctx->inputs[0]);

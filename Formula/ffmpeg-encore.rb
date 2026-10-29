@@ -6,10 +6,9 @@
 class FfmpegEncore < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-8.1.2.tar.xz"
-  sha256 "464beb5e7bf0c311e68b45ae2f04e9cc2af88851abb4082231742a74d97b524c"
+  url "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz"
+  sha256 "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e"
   license "GPL-3.0-or-later"
-  revision 1
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   bottle do
@@ -36,7 +35,7 @@ class FfmpegEncore < Formula
   depends_on "libx11"
   depends_on "libxcb"
   depends_on "openjpeg"
-  depends_on "openssl@3"
+  depends_on "openssl@4"
   depends_on "svt-av1"
   depends_on "x264"
   depends_on "x265"
@@ -67,6 +66,23 @@ class FfmpegEncore < Formula
   resource "dnenhance_filter" do
     url "https://github.com/svt/ffmpeg-filter-dnenhance/archive/refs/tags/v1.0.tar.gz"
     sha256 "e46c49367f35fa95e1c1603efb9bd8877e237e4f0a74e8132286d1c1354b95bb"
+  end
+
+  # EOF guard for sidechaincompress: without it the filter forwards input
+  # EOF unconditionally, closing its output at the main input's EOF pts and
+  # dropping everything still buffered in its fifos when the sidechain
+  # producer (dnenhance) trails behind. Observed as 68-72 hop (~0.7 s)
+  # truncation of every _STEREO_DE rendition under parallel filtergraph
+  # load; verified fixed (72 -> 0 hop) on real mark material through the
+  # mark-s3-gateway, source-identical A/B build.
+  # Upstream status: not yet submitted upstream; the guard mirrors what
+  # other dual-input filters already do before forwarding status.
+  # The patch ships in this tap (patches/sidechaincompress_eof_guard.patch);
+  # file:// with __dir__ keeps the formula and the patch versioned together
+  # and downloadable from the same checkout.
+  patch do
+    url "file://#{__dir__}/../patches/sidechaincompress_eof_guard.patch"
+    sha256 "6c9695908385bc1c3d6aca2d163910389d901182ddfa112aca0f8990ff3174c4"
   end
 
   def install
