@@ -68,6 +68,23 @@ class FfmpegEncore < Formula
     sha256 "e46c49367f35fa95e1c1603efb9bd8877e237e4f0a74e8132286d1c1354b95bb"
   end
 
+  # EOF guard for sidechaincompress: without it the filter forwards input
+  # EOF unconditionally, closing its output at the main input's EOF pts and
+  # dropping everything still buffered in its fifos when the sidechain
+  # producer (dnenhance) trails behind. Observed as 68-72 hop (~0.7 s)
+  # truncation of every _STEREO_DE rendition under parallel filtergraph
+  # load; verified fixed (72 -> 0 hop) on real mark material through the
+  # mark-s3-gateway, source-identical A/B build.
+  # Upstream status: not yet submitted upstream; the guard mirrors what
+  # other dual-input filters already do before forwarding status.
+  # The patch ships in this tap (patches/sidechaincompress_eof_guard.patch);
+  # file:// with __dir__ keeps the formula and the patch versioned together
+  # and downloadable from the same checkout.
+  patch do
+    url "file://#{__dir__}/../patches/sidechaincompress_eof_guard.patch"
+    sha256 "6c9695908385bc1c3d6aca2d163910389d901182ddfa112aca0f8990ff3174c4"
+  end
+
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
