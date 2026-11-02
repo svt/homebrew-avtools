@@ -68,31 +68,13 @@ class FfmpegEncore < Formula
     sha256 "e46c49367f35fa95e1c1603efb9bd8877e237e4f0a74e8132286d1c1354b95bb"
   end
 
-  # EOF guard for sidechaincompress: without it the filter forwards input
-  # EOF unconditionally, closing its output at the main input's EOF pts and
-  # dropping everything still buffered in its fifos when the sidechain
-  # producer (dnenhance) trails behind. Observed as 68-72 hop (~0.7 s)
-  # truncation of every _STEREO_DE rendition under parallel filtergraph
-  # load; verified fixed (72 -> 0 hop) on real mark material through the
-  # mark-s3-gateway, source-identical A/B build.
-  # Upstream status: not yet submitted upstream; the guard mirrors what
-  # other dual-input filters already do before forwarding status.
-  # The patch ships in this tap (patches/sidechaincompress_eof_guard.patch);
-  # file:// with __dir__ keeps the formula and the patch versioned together
-  # and downloadable from the same checkout.
+  # Prevents truncation of sidechain-fed output at EOF (see README 'Patches').
   patch do
     url "file://#{__dir__}/../patches/sidechaincompress_eof_guard.patch"
     sha256 "6c9695908385bc1c3d6aca2d163910389d901182ddfa112aca0f8990ff3174c4"
   end
 
-  # dnxhdenc fast rate control: the goto retry pushed macroblocks to
-  # qscale + 2 while sizing from qscale + 1 tables, and DNxHD's VLC for
-  # large coefficients is not monotonic in qscale, so the encoded slice
-  # could exceed its reserved space and abort on the put_bits assertion.
-  # Stop at qscale + 1 (dnxhd_find_qscale already verified it fits) and
-  # do an exact size check instead. Patch by Olof Lindman, see
-  # videocore/inbox#276; upstreamable as-is.
-  # The patch ships in this tap (patches/dnxhdenc-fast-ratecontrol.patch).
+  # Prevents a slice-buffer overflow in DNxHD fast rate control (see README 'Patches').
   patch do
     url "file://#{__dir__}/../patches/dnxhdenc-fast-ratecontrol.patch"
     sha256 "7b3181a46a7b1602cb40e1b47e9c963a34f1cace583eb84b5a47e4e5dcb1fd17"

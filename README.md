@@ -22,6 +22,21 @@ Pre-built bottles are published as GitHub releases for Apple Silicon macOS and
 for Linux (`arm64` and `x86_64`), so installation usually needs no local
 compilation.
 
+## Patches
+
+The `ffmpeg-encore` formula applies a small set of local FFmpeg patches from
+[`patches/`](patches/). They are kept minimal and each is intended for
+upstreaming; the list below says what each one fixes and why it is carried
+here in the meantime.
+
+| Patch | What it fixes |
+| --- | --- |
+| [`sidechaincompress_eof_guard.patch`](patches/sidechaincompress_eof_guard.patch) | `sidechaincompress` forwarded input EOF without checking its own buffered samples, so a slow sidechain producer (e.g. `dnenhance` draining its lookahead at EOF) could lose its trailing output — audible as a truncated enhanced-audio track under heavy parallel filtergraph load. The guard forwards status only once the filter's own fifo for that input is drained, matching what other dual-input filters already do. |
+| [`dnxhdenc-fast-ratecontrol.patch`](patches/dnxhdenc-fast-ratecontrol.patch) | The DNxHD encoder's fast rate control could raise a macroblock's qscale twice while sizing it once, and since DNxHD's VLC coding of large coefficients is not monotonic in qscale, an encoded slice could outgrow its reserved space and abort on the `put_bits` assertion. The patch stops at the qscale the rate search already verified and does an exact size check instead, returning an error code rather than crashing. Contributes to [FFmpeg trac #9844](https://trac.ffmpeg.org/ticket/9844). |
+
+Patches live in this repository and are referenced with `file://#{__dir__}`
+URLs, so the formula and its patches stay versioned together.
+
 ## Installation
 
 Add the tap, then install the formulas you need:
