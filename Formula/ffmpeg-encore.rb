@@ -85,6 +85,19 @@ class FfmpegEncore < Formula
     sha256 "6c9695908385bc1c3d6aca2d163910389d901182ddfa112aca0f8990ff3174c4"
   end
 
+  # dnxhdenc fast rate control: the goto retry pushed macroblocks to
+  # qscale + 2 while sizing from qscale + 1 tables, and DNxHD's VLC for
+  # large coefficients is not monotonic in qscale, so the encoded slice
+  # could exceed its reserved space and abort on the put_bits assertion.
+  # Stop at qscale + 1 (dnxhd_find_qscale already verified it fits) and
+  # do an exact size check instead. Patch by Olof Lindman, see
+  # videocore/inbox#276; upstreamable as-is.
+  # The patch ships in this tap (patches/dnxhdenc-fast-ratecontrol.patch).
+  patch do
+    url "file://#{__dir__}/../patches/dnxhdenc-fast-ratecontrol.patch"
+    sha256 "7b3181a46a7b1602cb40e1b47e9c963a34f1cace583eb84b5a47e4e5dcb1fd17"
+  end
+
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")

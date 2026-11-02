@@ -1,0 +1,37 @@
+diff --git a/libavcodec/dnxhdenc.c b/libavcodec/dnxhdenc.c
+index 844731f6c4..37f0a7df15 100644
+--- a/libavcodec/dnxhdenc.c
++++ b/libavcodec/dnxhdenc.c
+@@ -1212,7 +1212,6 @@ static int dnxhd_encode_fast(AVCodecContext *avctx, DNXHDEncContext *ctx)
+             avctx->execute2(avctx, dnxhd_mb_var_thread,
+                             NULL, NULL, ctx->m.c.mb_height);
+         radix_sort(ctx->mb_cmp, ctx->mb_cmp_tmp, ctx->m.c.mb_num);
+-retry:
+         for (int x = 0; x < ctx->m.c.mb_num && max_bits > ctx->frame_bits; x++) {
+             int mb = ctx->mb_cmp[x].mb;
+             int rc = (ctx->qscale * ctx->m.c.mb_num ) + mb;
+@@ -1223,8 +1222,22 @@ retry:
+             ctx->mb_bits[mb]   = ctx->mb_rc[rc + ctx->m.c.mb_num].bits;
+         }
+ 
+-        if (max_bits > ctx->frame_bits)
+-            goto retry;
++        /* max_bits assumes worst case padding for every slice, so it can
++         * still be above frame_bits once all macroblocks use qscale + 1,
++         * which dnxhd_find_qscale() has checked to fit with the actual
++         * padding. Do not raise qscale any further: bit counts are only
++         * known for qscale and qscale + 1, and the VLC cost of a macroblock
++         * can grow with qscale, which would overflow the slice sizes. */
++        if (max_bits > ctx->frame_bits) {
++            unsigned bits = 0;
++            for (int y = 0; y < ctx->m.c.mb_height; y++) {
++                for (int x = 0; x < ctx->m.c.mb_width; x++)
++                    bits += ctx->mb_bits[y * ctx->m.c.mb_width + x];
++                bits = (bits + 31) & ~31; // padding
++            }
++            if (bits > ctx->frame_bits)
++                return AVERROR_BUG;
++        }
+     }
+     return 0;
+ }
