@@ -64,8 +64,8 @@ class FfmpegEncore < Formula
   end
 
   resource "dnenhance_filter" do
-    url "https://github.com/svt/ffmpeg-filter-dnenhance/archive/refs/tags/v1.0.tar.gz"
-    sha256 "e46c49367f35fa95e1c1603efb9bd8877e237e4f0a74e8132286d1c1354b95bb"
+    url "https://github.com/svt/ffmpeg-filter-dnenhance/archive/refs/tags/v1.0.1.tar.gz"
+    sha256 "7105c11475cff091d20fcfaf459164845177f950760fd334beb7ac8299180871"
   end
 
   # Prevents truncation of sidechain-fed output at EOF (see README 'Patches').
