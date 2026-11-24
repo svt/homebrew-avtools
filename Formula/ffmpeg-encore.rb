@@ -43,7 +43,7 @@ class FfmpegEncore < Formula
   depends_on "zimg"
   # GPL-incompatible: forces --enable-nonfree (unredistributable), so keep it
   # opt-in and out of the default bottle.
-  depends_on "fdk-aac" => :optional
+  depends_on "svt/avtools/fdk-aac" => :optional
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
